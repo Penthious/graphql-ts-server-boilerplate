@@ -6,7 +6,7 @@
     "port": 5432,
     "username": "postgres",
     "password": "postgres",
-    "database": "grapqhl-ts-server-boilerplate",
+    "database": "graphql-ts-server-boilerplate",
     "synchronize": true,
     "logging": true,
     "entities": [

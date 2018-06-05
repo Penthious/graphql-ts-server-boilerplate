@@ -1,18 +1,19 @@
+import { User } from "../../entity/User";
 import { request } from "graphql-request";
-
-import { User } from "../entity/User";
-import { startServer } from "../startServer";
+import { startServer } from "../../startServer";
+import { AddressInfo } from "net";
 
 let getHost = () => "";
 
 beforeAll(async () => {
   const app = await startServer();
-  const { port } = app.address();
+  const { port } = app.address() as AddressInfo; // windows workaround to use AddressInfo as .address() is using windows pipe which returns a string
+
   getHost = () => `http://127.0.0.1:${port}`;
 });
 
-const email = "tom@bob.com";
-const password = "jalksdf";
+const email: string = "tom@bob.com";
+const password: string = "jalksdf";
 
 const mutation = `
 mutation {
