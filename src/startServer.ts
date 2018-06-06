@@ -22,9 +22,15 @@ export const startServer = async () => {
 
   const server = new GraphQLServer({ schema: mergeSchemas({ schemas }) });
   await createTypeormConn();
-  const app = await server.start({
+
+  const options = {
     port: process.env.NODE_ENV === "test" ? 0 : 4000,
-  });
+    endpoint: '/graphql',
+    subscriptions: '/subscriptions',
+    playground: '/playground',
+  };
+
+  const app = await server.start(options);
   console.log("Server is running on localhost:4000");
 
   return app;

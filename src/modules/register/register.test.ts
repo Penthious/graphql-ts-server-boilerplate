@@ -9,7 +9,7 @@ beforeAll(async () => {
   const app = await startServer();
   const { port } = app.address() as AddressInfo; // windows workaround to use AddressInfo as .address() is using windows pipe which returns a string
 
-  getHost = () => `http://127.0.0.1:${port}`;
+  getHost = () => `http://127.0.0.1:${port}/graphql`;
 });
 
 const email: string = "tom@bob.com";
