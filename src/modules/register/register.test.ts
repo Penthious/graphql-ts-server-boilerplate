@@ -17,16 +17,33 @@ const password: string = "jalksdf";
 
 const mutation = `
 mutation {
-  register(email: "${email}", password: "${password}")
+  register(email: "${email}", password: "${password}"){
+    path
+    message
+    status
+  }
 }
 `;
 
 test("Register user", async () => {
   const response = await request(getHost(), mutation);
-  expect(response).toEqual({ register: true });
+  expect(response).toEqual({ register: null });
   const users = await User.find({ where: { email } });
   expect(users).toHaveLength(1);
   const user = users[0];
   expect(user.email).toEqual(email);
   expect(user.password).not.toEqual(password);
+});
+
+test("Register a user with the same email", async () => {
+  const response = (await request(getHost(), mutation)) as {
+    register: Array<any>;
+  };
+  const users = await User.find({ where: { email } });
+
+  expect(users).toHaveLength(1);
+  expect(response.register[0].path).toEqual("email");
+  expect(Object.keys(response.register[0])).toEqual(
+    expect.arrayContaining(["path", "message", "status"]),
+  );
 });

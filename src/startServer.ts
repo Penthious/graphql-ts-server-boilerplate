@@ -11,9 +11,11 @@ export const startServer = async () => {
   const schemas: GraphQLSchema[] = [];
   const folders: string[] = readdirSync(join(__dirname, "./modules"));
   folders.forEach(folder => {
-    const { resolvers } = require(`./modules/${folder}/resolvers`);
+    console.log(folder);
+    
+    const { resolvers } = require(`./modules/${folder}/${folder}`);
     const typeDefs = importSchema(
-      join(__dirname, `./modules/${folder}/schema.graphql`),
+      join(__dirname, `./modules/${folder}/${folder}.graphql`),
     );
     schemas.push(makeExecutableSchema({ resolvers, typeDefs }));
   });
