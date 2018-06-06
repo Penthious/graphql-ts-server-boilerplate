@@ -26,7 +26,7 @@ mutation {
 `;
 
 test("Register user", async () => {
-  const response = await request(getHost(), mutation);
+  const response = await request<register>(getHost(), mutation);
   expect(response).toEqual({ register: null });
   const users = await User.find({ where: { email } });
   expect(users).toHaveLength(1);
@@ -36,9 +36,8 @@ test("Register user", async () => {
 });
 
 test("Register a user with the same email", async () => {
-  const response = (await request(getHost(), mutation)) as {
-    register: Array<any>;
-  };
+  const response = await request<registerError>(getHost(), mutation);
+
   const users = await User.find({ where: { email } });
 
   expect(users).toHaveLength(1);
