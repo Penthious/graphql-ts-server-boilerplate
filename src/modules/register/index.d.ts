@@ -7,7 +7,6 @@ interface registerError {
     {
       path: string;
       message: string;
-      status: number;
     }
   ];
 }

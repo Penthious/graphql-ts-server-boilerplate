@@ -17,19 +17,14 @@ export const outputSuccess = ({
 };
 
 export const outputError = ({
-  path,
-  message,
   status,
+  errors,
 }: {
-  path: string;
-  message: any;
   status: number;
-}): object[] => {
-  return [
-    {
-      status,
-      path,
-      message,
-    },
-  ];
+  errors: Array<{ path: string; message: any }>;
+}): object => {
+  return {
+    status,
+    errors,
+  };
 };

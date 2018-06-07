@@ -1,28 +1,51 @@
 import { ResolverMap } from "../../types/graphql-utils";
 import { User } from "../../entity/User";
 import { hash } from "bcryptjs";
-import { outputError } from "../../utils/responseHandling";
+import * as yup from "yup";
+import { formatYupError } from "../../utils/formatYupError";
+import {
+  duplicateEmail,
+  emailNotLongEnough,
+  passwordNotLongEnough,
+  invalidEmail,
+} from "./errorMessages";
+
+const schema = yup.object().shape({
+  email: yup
+    .string()
+    .min(3, emailNotLongEnough)
+    .max(255)
+    .email(invalidEmail),
+  password: yup
+    .string()
+    .min(3, passwordNotLongEnough)
+    .max(255),
+});
 
 export const resolvers: ResolverMap = {
   Query: {
     bye: () => "bye",
   },
   Mutation: {
-    register: async (
-      _,
-      { email, password }: GQL.IRegisterOnMutationArguments,
-    ) => {
+    register: async (_, args: GQL.IRegisterOnMutationArguments) => {
+      try {
+        await schema.validate(args, { abortEarly: false });
+      } catch (err) {
+        return formatYupError(err);
+      }
+      const { email, password } = args;
       const userExists = await User.findOne({
         where: { email },
         select: ["id"],
       });
 
       if (userExists) {
-        return outputError({
-          path: "email",
-          message: "Already exists",
-          status: 401,
-        });
+        return [
+          {
+            path: "email",
+            message: duplicateEmail,
+          },
+        ];
       }
 
       const hashedPassword = await hash(password, 10);
