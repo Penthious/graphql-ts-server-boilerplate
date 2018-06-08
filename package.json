@@ -6,7 +6,7 @@
     "@types/bcryptjs": "^2.4.1",
     "@types/ioredis": "^3.2.8",
     "@types/jest": "^23.0.0",
-    "@types/node": "^10.3.1",
+    "@types/node": "^10.3.2",
     "@types/node-fetch": "^2.1.1",
     "@types/sparkpost": "^2.1.4",
     "@types/uuid": "^3.4.3",
@@ -41,7 +41,7 @@
   "scripts": {
     "start": "cross-env NODE_ENV=development nodemon --exec ts-node src/index.ts",
     "test": "cross-env NODE_ENV=test jest --runInBand --forceExit",
-    "gen-schema-types": "ts-node src/scripts/createTypes.ts"
+    "gen-schema-types": "ts-node -r dotenv/config src/scripts/createTypes.ts"
   },
   "jest": {
     "globalSetup": "./src/testSetup/callSetup.js",

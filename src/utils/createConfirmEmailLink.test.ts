@@ -30,7 +30,6 @@ describe("Email link", () => {
     expect(user.confirmed).toBeTruthy()
 
     const key = url.split("/").pop() as string;
-    console.log(key);
     
     const value = await redis.get(key)
     expect(value).toBeNull();

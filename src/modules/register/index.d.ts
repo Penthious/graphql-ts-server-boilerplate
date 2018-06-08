@@ -1,12 +1,9 @@
-interface register {
-  register: null;
-}
+declare namespace REGISTER {
+  interface register {
+    register: null;
+  }
 
-interface registerError {
-  register: [
-    {
-      path: string;
-      message: string;
-    }
-  ];
+  interface registerError {
+    register: [GQL.IError];
+  }
 }

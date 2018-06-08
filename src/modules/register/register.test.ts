@@ -28,7 +28,11 @@ describe("Register", () => {
   `;
 
   test("Register user", async () => {
-    const response = await request<register>(host, mutation(email, password));
+    const response = await request<REGISTER.register>(
+      host,
+      mutation(email, password),
+    );
+
     expect(response).toEqual({ register: null });
     const users = await User.find({ where: { email } });
     expect(users).toHaveLength(1);
@@ -38,7 +42,7 @@ describe("Register", () => {
   });
 
   test("Register a user with the same email", async () => {
-    const response = await request<registerError>(
+    const response = await request<REGISTER.registerError>(
       host,
       mutation(email, password),
     );
@@ -53,7 +57,7 @@ describe("Register", () => {
   });
 
   test("Catch non emails", async () => {
-    const response = await request<registerError>(
+    const response = await request<REGISTER.registerError>(
       host,
       mutation("bad", password),
     );
@@ -68,7 +72,7 @@ describe("Register", () => {
   });
 
   test("Catch short emails", async () => {
-    const response = await request<registerError>(
+    const response = await request<REGISTER.registerError>(
       host,
       mutation("b", password),
     );
@@ -83,7 +87,10 @@ describe("Register", () => {
   });
 
   test("Catch short passwords", async () => {
-    const response = await request<registerError>(host, mutation(email, "1"));
+    const response = await request<REGISTER.registerError>(
+      host,
+      mutation(email, "1"),
+    );
 
     const users = await User.find({ where: { email } });
 

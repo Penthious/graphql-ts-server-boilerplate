@@ -7,8 +7,6 @@ export const createConfirmEmailLink = async (
   redis: Redis,
 ): Promise<string> => {
   const id = v4();
-  console.log(url, "WE ARE URL");
-  console.log(`${url}/confirm/${id}`);
 
   await storeLinkToRedis(id, userId, redis);
   return `${url}/confirm/${id}`;
