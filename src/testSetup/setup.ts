@@ -1,3 +1,4 @@
+import "dotenv/config";
 import { AddressInfo } from "net";
 import { startServer } from "../startServer";
 
