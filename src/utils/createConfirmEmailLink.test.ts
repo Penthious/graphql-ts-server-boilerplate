@@ -4,17 +4,21 @@ import fetch from "node-fetch";
 import { createConfirmEmailLink } from "./createConfirmEmailLink";
 import { createTypeormConn } from "./createTypeormConn";
 import { User } from "../entity/User";
+import { Connection } from "typeorm";
 
 const host = process.env.TEST_HOST as string;
+let conn: Connection;
 
 beforeAll(async () => {
-  await createTypeormConn();
+  conn = await createTypeormConn();
   const user = await User.create({
     email: "test@test.com",
     password: "123456"
   }).save();
   this.userId = user.id;
 });
+
+afterAll(() => conn.close())
 
 describe("Email link", () => {
     const redis = new Redis();

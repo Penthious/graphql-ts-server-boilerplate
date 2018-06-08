@@ -7,12 +7,16 @@ import {
   passwordNotLongEnough,
 } from "./errorMessages";
 import { createTypeormConn } from "../../utils/createTypeormConn";
+import { Connection } from "typeorm";
 
 const host = (process.env.TEST_HOST as string) + "/graphql";
+let conn: Connection;
 
 beforeAll(async () => {
-  await createTypeormConn();
+  conn = await createTypeormConn();
 });
+
+afterAll(() => conn.close());
 
 describe("Register", () => {
   const email: string = "tom@bob.com";
