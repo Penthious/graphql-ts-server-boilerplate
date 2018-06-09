@@ -5,16 +5,16 @@ import { createConfirmEmailLink } from "./createConfirmEmailLink";
 import { createTypeormConn } from "./createTypeormConn";
 import { User } from "../entity/User";
 import { Connection } from "typeorm";
+import TestClient from "../testSetup/testCLient";
 
 const host = process.env.TEST_HOST as string;
+const client = new TestClient(host)
 let conn: Connection;
 
 beforeAll(async () => {
   conn = await createTypeormConn();
-  const user = await User.create({
-    email: "test@test.com",
-    password: "123456"
-  }).save();
+  const user = await client.createUser()
+
   this.userId = user.id;
 });
 

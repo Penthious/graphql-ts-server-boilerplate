@@ -1,9 +1,13 @@
 declare namespace REGISTER {
   interface register {
-    register: null;
+    data: {
+      register: null;
+    };
   }
 
   interface registerError {
-    register: [GQL.IError];
+    data: {
+      register: [GQL.IError];
+    };
   }
 }

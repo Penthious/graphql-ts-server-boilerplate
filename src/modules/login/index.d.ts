@@ -1,9 +1,13 @@
 declare namespace LOGIN {
   interface login {
-    login: null;
+    data: {
+      login: null;
+    };
   }
 
   interface loginError {
-    login: [GQL.IError];
+    data: {
+      login: [GQL.IError];
+    };
   }
 }
