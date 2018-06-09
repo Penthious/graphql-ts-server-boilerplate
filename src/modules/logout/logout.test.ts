@@ -4,6 +4,7 @@ import TestClient from "../../testSetup/testCLient";
 
 const host = (process.env.TEST_HOST as string) + "/graphql";
 const client = new TestClient(host);
+const client2 = new TestClient(host);
 const email: string = "tom@bob.com";
 const password: string = "aoeuaoeuaoeu";
 let conn: Connection;
@@ -15,8 +16,20 @@ beforeAll(async () => {
 
 afterAll(() => conn.close());
 
-describe("logout", () => {
-  test("Can get current user", async () => {
+describe("multiple sessions", () => {
+  test("Logout across all open sessions", async () => {
+    await client.login(email, password);
+    await client2.login(email, password);
+
+    expect(await client.me()).toEqual(await client2.me());
+
+    await client.logout();
+    expect(await client.me()).toEqual(await client2.me());
+  });
+});
+
+describe("single session", () => {
+  test("Can logout current user", async () => {
     await client.login(email, password);
 
     const response = await client.me();

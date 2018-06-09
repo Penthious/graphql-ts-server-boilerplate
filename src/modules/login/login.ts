@@ -2,6 +2,7 @@ import { ResolverMap } from "../../types/graphql-utils";
 import { User } from "../../entity/User";
 import { compare } from "bcryptjs";
 import { invalidLogin, confirmEmailError } from "./errorMessages";
+import { USER_SESSION_ID_PREFIX } from "../../utils/constants";
 
 export const resolvers: ResolverMap = {
   Query: {
@@ -11,7 +12,7 @@ export const resolvers: ResolverMap = {
     login: async (
       _,
       { email, password }: GQL.ILoginOnMutationArguments,
-      { session },
+      { session, redis, request },
     ) => {
       const user = await User.findOne({ where: { email } });
 
@@ -33,6 +34,12 @@ export const resolvers: ResolverMap = {
       }
 
       session.userId = user.id;
+      if (request.sessionID) {
+        await redis.lpush(
+          `${USER_SESSION_ID_PREFIX}${user.id}`,
+          request.sessionID,
+        );
+      }
 
       return null;
     },

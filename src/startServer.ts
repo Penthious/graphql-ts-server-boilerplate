@@ -8,6 +8,7 @@ import { confirmEmail } from "./routes/confirmEmail";
 import { createTypeormConn } from "./utils/createTypeormConn";
 import { genSchema } from "./utils/genSchema";
 import { redis } from "./redis";
+import { REDIS_SESSION_PREFIX } from "./utils/constants";
 
 const RedisStore = connectRedis(session);
 
@@ -15,6 +16,7 @@ export const startServer = async () => {
   const server = new GraphQLServer({
     schema: genSchema(),
     context: ({ request }) => ({
+      request,
       redis,
       session: request.session,
       url: `${request.protocol}://${request.get("host")}`,
@@ -23,7 +25,10 @@ export const startServer = async () => {
 
   server.express.use(
     session({
-      store: new RedisStore({}),
+      store: new RedisStore({
+        client: redis as any,
+        prefix: REDIS_SESSION_PREFIX,
+      }),
       name: "qid",
       secret: process.env.SESSION_SECRET as string,
       resave: false,

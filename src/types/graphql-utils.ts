@@ -7,8 +7,11 @@ export type Resolver = (
   info: any,
 ) => any;
 
-export type Context {
-  redis: Redis; url: string; session: Session;
+export interface Context {
+  request: Express.Request;
+  redis: Redis;
+  url: string;
+  session: Session;
 }
 
 export type GraphQLMiddlewareFunc = (
