@@ -7,7 +7,9 @@ export default async (
   context: Context,
   info: any,
 ) => {
-  const result = await resolver(parent, args, context, info);
+  if (!context.session || !context.session.userId) {
+    throw Error("no cookie");
+  }
 
-  return result;
+  return resolver(parent, args, context, info);
 };

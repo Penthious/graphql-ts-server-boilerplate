@@ -2,8 +2,7 @@ import axios from "axios";
 import { Connection } from "typeorm";
 import { createTypeormConn } from "../../utils/createTypeormConn";
 import { User } from "../../entity/User";
-import { ME } from ".";
-import { loginMutation } from "../../testSetup/mutations";
+import { loginMutation, logoutMutation } from "../../testSetup/mutations";
 import { meQuery } from "../../testSetup/queries";
 
 const host = (process.env.TEST_HOST as string) + "/graphql";
@@ -14,7 +13,7 @@ let conn: Connection;
 beforeAll(async () => {
   conn = await createTypeormConn();
 
-  this.user = await User.create({
+  await User.create({
     email,
     password,
     confirmed: true,
@@ -23,14 +22,7 @@ beforeAll(async () => {
 
 afterAll(() => conn.close());
 
-describe("me", () => {
-  test("Can not get user if not logged in", async () => {
-    const response = await axios.post(host, { query: meQuery });
-
-    expect(response.data.data.me).toBeNull();
-    expect(response.data.errors[0]).toHaveProperty("message");
-  });
-
+describe("logout", () => {
   test("Can get current user", async () => {
     await axios.post(
       host,
@@ -40,17 +32,20 @@ describe("me", () => {
       { withCredentials: true },
     );
 
-    const response = await axios.post<ME.meResponse>(
+    const response = await meAxios();
+    expect(response.data.data.me).toBeTruthy();
+
+    await axios.post(
       host,
-      { query: meQuery },
+      { query: logoutMutation },
       { withCredentials: true },
     );
+    expect(response.data.data.me).toBeTruthy();
 
-    expect(response.data.data).toEqual({
-      me: {
-        id: this.user.id,
-        email: this.user.email,
-      },
-    });
+    const response2 = await meAxios();
+    expect(response2.data.data.me).toBeNull();
   });
 });
+
+const meAxios = () =>
+  axios.post(host, { query: meQuery }, { withCredentials: true });

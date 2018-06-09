@@ -15,8 +15,6 @@ export const resolvers: ResolverMap = {
     ) => {
       const user = await User.findOne({ where: { email } });
 
-      console.log(user, email, password);
-
       if (!user || !(await compare(password, user.password))) {
         return [
           {

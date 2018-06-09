@@ -8,6 +8,7 @@ import {
 } from "./errorMessages";
 import { createTypeormConn } from "../../utils/createTypeormConn";
 import { Connection } from "typeorm";
+import { registerMutation } from "../../testSetup/mutations";
 
 const host = (process.env.TEST_HOST as string) + "/graphql";
 let conn: Connection;
@@ -22,19 +23,10 @@ describe("Register", () => {
   const email: string = "tom@bob.com";
   const password: string = "aoeuaoeuaoeu";
 
-  const mutation = (email: string, password: string) => `
-  mutation {
-    register(email: "${email}", password: "${password}"){
-      path
-      message
-    }
-  }
-  `;
-
   test("Register user", async () => {
     const response = await request<REGISTER.register>(
       host,
-      mutation(email, password),
+      registerMutation(email, password),
     );
 
     expect(response).toEqual({ register: null });
@@ -48,7 +40,7 @@ describe("Register", () => {
   test("Register a user with the same email", async () => {
     const response = await request<REGISTER.registerError>(
       host,
-      mutation(email, password),
+      registerMutation(email, password),
     );
 
     const users = await User.find({ where: { email } });
@@ -63,7 +55,7 @@ describe("Register", () => {
   test("Catch non emails", async () => {
     const response = await request<REGISTER.registerError>(
       host,
-      mutation("bad", password),
+      registerMutation("bad", password),
     );
 
     const users = await User.find({ where: { email } });
@@ -78,7 +70,7 @@ describe("Register", () => {
   test("Catch short emails", async () => {
     const response = await request<REGISTER.registerError>(
       host,
-      mutation("b", password),
+      registerMutation("b", password),
     );
 
     const users = await User.find({ where: { email } });
@@ -93,7 +85,7 @@ describe("Register", () => {
   test("Catch short passwords", async () => {
     const response = await request<REGISTER.registerError>(
       host,
-      mutation(email, "1"),
+      registerMutation(email, "1"),
     );
 
     const users = await User.find({ where: { email } });
