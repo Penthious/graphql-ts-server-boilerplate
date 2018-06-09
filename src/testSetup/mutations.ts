@@ -16,8 +16,8 @@ export const registerMutation = (email: string, password: string) => `
   }
   `;
 
-export const logoutMutation = `
-  mutation {
-    logout
+export const logoutMutation = (multi: boolean) => `
+  mutation{
+    logout(multi: ${multi})
   }
   `;

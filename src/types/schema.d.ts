@@ -23,18 +23,31 @@ column: number;
 interface IQuery {
 __typename: "Query";
 bye2: string | null;
+dummy: string | null;
+me: IUser | null;
 bye: string | null;
+}
+
+interface IUser {
+__typename: "User";
+id: string;
+email: string;
 }
 
 interface IMutation {
 __typename: "Mutation";
 login: Array<IError>;
+logout: boolean;
 register: Array<IError>;
 }
 
 interface ILoginOnMutationArguments {
 email: string;
 password: string;
+}
+
+interface ILogoutOnMutationArguments {
+multi: boolean;
 }
 
 interface IRegisterOnMutationArguments {

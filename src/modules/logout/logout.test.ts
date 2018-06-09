@@ -23,7 +23,7 @@ describe("multiple sessions", () => {
 
     expect(await client.me()).toEqual(await client2.me());
 
-    await client.logout();
+    await client.logout(true /*multi*/);
     expect(await client.me()).toEqual(await client2.me());
   });
 });
@@ -31,13 +31,17 @@ describe("multiple sessions", () => {
 describe("single session", () => {
   test("Can logout current user", async () => {
     await client.login(email, password);
+    await client2.login(email, password);
 
     const response = await client.me();
     expect(response.data.me).toBeTruthy();
 
-    await client.logout();
+    await client.logout(false /*multi*/);
 
     const response2 = await client.me();
     expect(response2.data.me).toBeNull();
+
+    const response3 = await client2.me();
+    expect(response3.data.me).toBeTruthy();
   });
 });

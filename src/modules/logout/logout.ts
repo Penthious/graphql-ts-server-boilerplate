@@ -9,9 +9,13 @@ export const resolvers: ResolverMap = {
     dummy: () => "dummy",
   },
   Mutation: {
-    logout: async (_, __, { session, redis }) => {
+    logout: async (
+      _,
+      { multi }: GQL.ILogoutOnMutationArguments,
+      { session, redis, request },
+    ) => {
       const { userId } = session;
-      if (userId) {
+      if (userId && multi) {
         const sessionIds = await redis.lrange(
           `${USER_SESSION_ID_PREFIX}${userId}`,
           0,
@@ -21,6 +25,8 @@ export const resolvers: ResolverMap = {
         sessionIds.forEach(
           async (id: string) => await redis.del(`${REDIS_SESSION_PREFIX}${id}`),
         );
+      } else if (userId && !multi) {
+        await redis.del(`${REDIS_SESSION_PREFIX}${request.sessionID}`);
       }
       return null;
     },

@@ -2,5 +2,5 @@ type Query {
   dummy: String
 }
 type Mutation {
-  logout: Boolean!
+  logout(multi: Boolean!): Boolean!
 }

@@ -57,11 +57,11 @@ export default class TestClient {
     });
   }
 
-  async logout(): Promise<LOGOUT.logout> {
+  async logout(multi: boolean): Promise<LOGOUT.logout> {
     return rp.post(this.url, {
       ...this.options,
       body: {
-        query: logoutMutation,
+        query: logoutMutation(multi),
       },
     });
   }
