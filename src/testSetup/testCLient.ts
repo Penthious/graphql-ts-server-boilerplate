@@ -1,6 +1,11 @@
 import * as rp from "request-promise";
 import * as request from "request";
-import { loginMutation, logoutMutation, registerMutation } from "./mutations";
+import {
+  loginMutation,
+  logoutMutation,
+  registerMutation,
+  forgotPasswordMutation,
+} from "./mutations";
 import { meQuery } from "./queries";
 import { ME } from "../modules/me";
 import { User } from "../entity/User";
@@ -45,6 +50,20 @@ export default class TestClient {
     return this.user;
   }
 
+  async forgotPasswordUpdate(
+    newPassword: string,
+    key: string,
+  ): Promise<
+    | FORGOTPASSWORD.forgotPasswordChange
+    | FORGOTPASSWORD.forgotPasswordChangeError
+  > {
+    return rp.post(this.url, {
+      ...this.options,
+      body: {
+        query: forgotPasswordMutation(newPassword, key),
+      },
+    });
+  }
   async login(
     email: string,
     password: string,

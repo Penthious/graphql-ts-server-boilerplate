@@ -1,7 +1,11 @@
 import { ResolverMap } from "../../types/graphql-utils";
 import { User } from "../../entity/User";
 import { compare } from "bcryptjs";
-import { invalidLogin, confirmEmailError } from "./errorMessages";
+import {
+  invalidLogin,
+  confirmEmailError,
+  accountLocked,
+} from "./errorMessages";
 import { USER_SESSION_ID_PREFIX } from "../../utils/constants";
 
 export const resolvers: ResolverMap = {
@@ -29,6 +33,15 @@ export const resolvers: ResolverMap = {
           {
             path: "email",
             message: confirmEmailError,
+          },
+        ];
+      }
+
+      if (user.accountLocked) {
+        return [
+          {
+            path: "email",
+            message: accountLocked,
           },
         ];
       }

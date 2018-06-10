@@ -4,6 +4,7 @@ import {
   BaseEntity,
   PrimaryGeneratedColumn,
   BeforeInsert,
+  BeforeUpdate,
 } from "typeorm";
 import { hash } from "bcryptjs";
 
@@ -19,8 +20,20 @@ export class User extends BaseEntity {
   @Column("boolean", { default: false })
   confirmed: boolean;
 
-  @BeforeInsert()
+  @Column("boolean", { default: false })
+  accountLocked: boolean;
+
   async hashPassword() {
     this.password = await hash(this.password, 10);
+  }
+
+  @BeforeInsert()
+  async preSave() {
+    await this.hashPassword();
+  }
+
+  @BeforeUpdate()
+  async preUpdate() {
+    await this.hashPassword();
   }
 }

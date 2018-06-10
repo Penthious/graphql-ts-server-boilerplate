@@ -1,8 +1,5 @@
 import { ResolverMap } from "../../types/graphql-utils";
-import {
-  USER_SESSION_ID_PREFIX,
-  REDIS_SESSION_PREFIX,
-} from "../../utils/constants";
+import { removeSingleSession, removeAllUserSessions } from "../../utils/removeUserSession";
 
 export const resolvers: ResolverMap = {
   Query: {
@@ -16,17 +13,9 @@ export const resolvers: ResolverMap = {
     ) => {
       const { userId } = session;
       if (userId && multi) {
-        const sessionIds = await redis.lrange(
-          `${USER_SESSION_ID_PREFIX}${userId}`,
-          0,
-          -1,
-        );
-
-        sessionIds.forEach(
-          async (id: string) => await redis.del(`${REDIS_SESSION_PREFIX}${id}`),
-        );
+        await removeAllUserSessions(userId, redis)
       } else if (userId && !multi) {
-        await redis.del(`${REDIS_SESSION_PREFIX}${request.sessionID}`);
+        await removeSingleSession(request.sessionID!);
       }
       return null;
     },

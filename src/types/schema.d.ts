@@ -22,6 +22,7 @@ column: number;
 
 interface IQuery {
 __typename: "Query";
+dummy4: string | null;
 bye2: string | null;
 dummy: string | null;
 me: IUser | null;
@@ -36,9 +37,20 @@ email: string;
 
 interface IMutation {
 __typename: "Mutation";
+sendForgotPasswordEmail: boolean;
+forgotPasswordUpdate: Array<IError>;
 login: Array<IError>;
 logout: boolean;
 register: Array<IError>;
+}
+
+interface ISendForgotPasswordEmailOnMutationArguments {
+email: string;
+}
+
+interface IForgotPasswordUpdateOnMutationArguments {
+newPassword: string;
+key: string;
 }
 
 interface ILoginOnMutationArguments {
