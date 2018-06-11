@@ -1,6 +1,7 @@
 import { Connection } from "typeorm";
-import { createTypeormConn } from "../../utils/createTypeormConn";
-import TestClient from "../../testSetup/testCLient";
+
+import TestClient from "../../../testSetup/testCLient";
+import { createTypeormConn } from "../../../utils/createTypeormConn";
 
 const host = (process.env.TEST_HOST as string) + "/graphql";
 const client = new TestClient(host);

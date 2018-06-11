@@ -1,13 +1,13 @@
-import { createTypeormConn } from "../../utils/createTypeormConn";
 import { Connection } from "typeorm";
-import TestClient from "../../testSetup/testCLient";
-import { redis } from "../../redis";
-import { createForgotPasswordLink } from "../../utils/createForgotPasswordLink";
-import { forgotPasswordLockAccount } from "../../utils/forgotPasswordLockAccount";
+
+import TestClient from "../../../testSetup/testCLient";
 import { accountLocked } from "../login/errorMessages";
-import { passwordNotLongEnough } from "../register/errorMessages";
+import { createForgotPasswordLink } from "../../../utils/createForgotPasswordLink";
+import { createTypeormConn } from "../../../utils/createTypeormConn";
 import { expiredKeyError } from "./errorMessages";
-import { User } from "../../entity/User";
+import { forgotPasswordLockAccount } from "../../../utils/forgotPasswordLockAccount";
+import { passwordNotLongEnough } from "../register/errorMessages";
+import { redis } from "../../../redis";
 
 const host: string = (process.env.TEST_HOST as string) + "/graphql";
 const password: string = "password";

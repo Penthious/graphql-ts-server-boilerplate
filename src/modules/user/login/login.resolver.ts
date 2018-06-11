@@ -1,12 +1,12 @@
-import { ResolverMap } from "../../types/graphql-utils";
-import { User } from "../../entity/User";
+import { ResolverMap } from "../../../types/graphql-utils";
+import { User } from "../../../entity/User";
 import { compare } from "bcryptjs";
 import {
   invalidLogin,
   confirmEmailError,
   accountLocked,
 } from "./errorMessages";
-import { USER_SESSION_ID_PREFIX } from "../../utils/constants";
+import { USER_SESSION_ID_PREFIX } from "../../../utils/constants";
 
 export const resolvers: ResolverMap = {
   Mutation: {

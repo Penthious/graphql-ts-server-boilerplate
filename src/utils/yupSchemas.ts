@@ -1,10 +1,11 @@
 import * as yup from "yup";
+
 import {
   emailNotLongEnough,
   invalidEmail,
   passwordNotLongEnough,
-} from "../modules/register/errorMessages";
-import { missingPasswordKeyError } from "../modules/forgotPassword/errorMessages";
+} from "../modules/user/register/errorMessages";
+import { missingPasswordKeyError } from "../modules/user/forgotPassword/errorMessages";
 
 export const emailValidation = yup
   .string()

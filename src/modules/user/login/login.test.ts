@@ -1,8 +1,9 @@
-import { createTypeormConn } from "../../utils/createTypeormConn";
-import { invalidLogin, confirmEmailError } from "./errorMessages";
-import { User } from "../../entity/User";
 import { Connection } from "typeorm";
-import TestClient from "../../testSetup/testCLient";
+
+import TestClient from "../../../testSetup/testCLient";
+import { User } from "../../../entity/User";
+import { createTypeormConn } from "../../../utils/createTypeormConn";
+import { invalidLogin, confirmEmailError } from "./errorMessages";
 
 const host = (process.env.TEST_HOST as string) + "/graphql";
 const email: string = "tom@bob.com";

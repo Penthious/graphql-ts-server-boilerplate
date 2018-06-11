@@ -1,11 +1,12 @@
-import { ResolverMap } from "../../types/graphql-utils";
-import { User } from "../../entity/User";
 import * as yup from "yup";
-import { formatYupError } from "../../utils/formatYupError";
+
+import { ResolverMap } from "../../../types/graphql-utils";
+import { User } from "../../../entity/User";
+import { createConfirmEmailLink } from "../../../utils/createConfirmEmailLink";
 import { duplicateEmail } from "./errorMessages";
-import { createConfirmEmailLink } from "../../utils/createConfirmEmailLink";
-import { sendEmail } from "../../utils/sendEmail";
-import { emailValidation, passwordValidation } from "../../utils/yupSchemas";
+import { emailValidation, passwordValidation } from "../../../utils/yupSchemas";
+import { formatYupError } from "../../../utils/formatYupError";
+import { sendEmail } from "../../../utils/sendEmail";
 
 const schema = yup.object().shape({
   email: emailValidation,

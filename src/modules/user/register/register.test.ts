@@ -1,16 +1,17 @@
-import { User } from "../../entity/User";
+import { Connection } from "typeorm";
+
+import TestClient from "../../../testSetup/testCLient";
 import {
   duplicateEmail,
   emailNotLongEnough,
   invalidEmail,
   passwordNotLongEnough,
 } from "./errorMessages";
-import { createTypeormConn } from "../../utils/createTypeormConn";
-import { Connection } from "typeorm";
-import TestClient from "../../testSetup/testCLient";
+import { createTypeormConn } from "../../../utils/createTypeormConn";
+import { User } from "../../../entity/User";
 
 const host = (process.env.TEST_HOST as string) + "/graphql";
-const client = new TestClient(host)
+const client = new TestClient(host);
 
 let conn: Connection;
 
@@ -25,7 +26,7 @@ describe("Register", () => {
   const password: string = "aoeuaoeuaoeu";
 
   test("Register user", async () => {
-    const response = await client.register(email, password)
+    const response = await client.register(email, password);
 
     expect(response.data).toEqual({ register: null });
     const users = await User.find({ where: { email } });
@@ -36,7 +37,10 @@ describe("Register", () => {
   });
 
   test("Register a user with the same email", async () => {
-    const response = await client.register(email, password) as REGISTER.registerError
+    const response = (await client.register(
+      email,
+      password,
+    )) as REGISTER.registerError;
 
     const users = await User.find({ where: { email } });
 
@@ -48,7 +52,10 @@ describe("Register", () => {
   });
 
   test("Catch non emails", async () => {
-    const response = await client.register('bad', password) as REGISTER.registerError
+    const response = (await client.register(
+      "bad",
+      password,
+    )) as REGISTER.registerError;
 
     const users = await User.find({ where: { email } });
 
@@ -60,7 +67,10 @@ describe("Register", () => {
   });
 
   test("Catch short emails", async () => {
-    const response = await client.register('b', password) as REGISTER.registerError
+    const response = (await client.register(
+      "b",
+      password,
+    )) as REGISTER.registerError;
 
     const users = await User.find({ where: { email } });
 
@@ -72,7 +82,10 @@ describe("Register", () => {
   });
 
   test("Catch short passwords", async () => {
-    const response = await client.register(email, "1") as REGISTER.registerError
+    const response = (await client.register(
+      email,
+      "1",
+    )) as REGISTER.registerError;
 
     const users = await User.find({ where: { email } });
 

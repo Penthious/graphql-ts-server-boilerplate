@@ -1,16 +1,17 @@
 import * as yup from "yup";
-import { ResolverMap } from "../../types/graphql-utils";
-import { forgotPasswordLockAccount } from "../../utils/forgotPasswordLockAccount";
-import { createForgotPasswordLink } from "../../utils/createForgotPasswordLink";
-import { User } from "../../entity/User";
-import { FORGOT_PASSWORD_PREFIX } from "../../utils/constants";
+
+import UserRepository from "../../../repositories/UserRepository";
+import { createForgotPasswordLink } from "../../../utils/createForgotPasswordLink";
 import { expiredKeyError } from "./errorMessages";
+import { FORGOT_PASSWORD_PREFIX } from "../../../utils/constants";
+import { forgotPasswordLockAccount } from "../../../utils/forgotPasswordLockAccount";
+import { formatYupError } from "../../../utils/formatYupError";
 import {
   passwordValidation,
   newPasswordKeyValidation,
-} from "../../utils/yupSchemas";
-import { formatYupError } from "../../utils/formatYupError";
-import UserRepository from "../../repositories/UserRepository";
+} from "../../../utils/yupSchemas";
+import { ResolverMap } from "../../../types/graphql-utils";
+import { User } from "../../../entity/User";
 
 const schema = yup.object().shape({
   newPassword: passwordValidation,
