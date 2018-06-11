@@ -12,8 +12,11 @@ import { hash } from "bcryptjs";
 export class User extends BaseEntity {
   @PrimaryGeneratedColumn("uuid") id: string;
 
-  @Column("varchar", { length: 255 })
+  @Column("varchar", { length: 255, nullable: true })
   email: string;
+
+  @Column("text", { nullable: true })
+  twitterId: string;
 
   @Column("text") password: string;
 

@@ -1,9 +1,9 @@
 import "dotenv/config";
 import "reflect-metadata";
 import * as connectRedis from "connect-redis";
-import * as session from "express-session";
 import * as RateLimit from "express-rate-limit";
 import * as RateLimitRedis from "rate-limit-redis";
+import * as session from "express-session";
 import { GraphQLServer } from "graphql-yoga";
 
 import { confirmEmail } from "./routes/confirmEmail";
@@ -11,6 +11,7 @@ import { createTypeormConn } from "./utils/createTypeormConn";
 import { genSchema } from "./utils/genSchema";
 import { redis } from "./redis";
 import { REDIS_SESSION_PREFIX } from "./utils/constants";
+import { twitterPassport } from "./routes/twitterOauth";
 
 const RedisStore = connectRedis(session);
 
@@ -65,6 +66,12 @@ export const startServer = async () => {
   server.express.get("/confirm/:id", confirmEmail);
 
   await createTypeormConn();
+
+  /** OATH **/
+
+  server.express.use(twitterPassport(server).initialize());
+
+  /** OATH end **/
 
   const options = {
     cors,
