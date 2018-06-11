@@ -7,11 +7,12 @@ import { forgotPasswordLockAccount } from "../../utils/forgotPasswordLockAccount
 import { accountLocked } from "../login/errorMessages";
 import { passwordNotLongEnough } from "../register/errorMessages";
 import { expiredKeyError } from "./errorMessages";
+import { User } from "../../entity/User";
 
 const host: string = (process.env.TEST_HOST as string) + "/graphql";
 const password: string = "password";
 const client: TestClient = new TestClient(host, undefined, password);
-const newPassword: string = "myNewPassword";
+const newPassword: string = "myNewPasswordi";
 let conn: Connection;
 
 beforeAll(async () => {

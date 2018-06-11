@@ -13,9 +13,6 @@ const schema = yup.object().shape({
 });
 
 export const resolvers: ResolverMap = {
-  Query: {
-    bye: () => "bye",
-  },
   Mutation: {
     register: async (
       _,

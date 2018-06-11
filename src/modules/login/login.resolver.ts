@@ -9,9 +9,6 @@ import {
 import { USER_SESSION_ID_PREFIX } from "../../utils/constants";
 
 export const resolvers: ResolverMap = {
-  Query: {
-    bye2: () => "bye",
-  },
   Mutation: {
     login: async (
       _,
@@ -19,7 +16,6 @@ export const resolvers: ResolverMap = {
       { session, redis, request },
     ) => {
       const user = await User.findOne({ where: { email } });
-
       if (!user || !(await compare(password, user.password))) {
         return [
           {

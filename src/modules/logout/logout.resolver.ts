@@ -1,10 +1,10 @@
 import { ResolverMap } from "../../types/graphql-utils";
-import { removeSingleSession, removeAllUserSessions } from "../../utils/removeUserSession";
+import {
+  removeSingleSession,
+  removeAllUserSessions,
+} from "../../utils/removeUserSession";
 
 export const resolvers: ResolverMap = {
-  Query: {
-    dummy: () => "dummy",
-  },
   Mutation: {
     logout: async (
       _,
@@ -13,7 +13,7 @@ export const resolvers: ResolverMap = {
     ) => {
       const { userId } = session;
       if (userId && multi) {
-        await removeAllUserSessions(userId, redis)
+        await removeAllUserSessions(userId, redis);
       } else if (userId && !multi) {
         await removeSingleSession(request.sessionID!);
       }
