@@ -29,9 +29,14 @@ import * as Glob from "glob";
 
 export const genSchema = () => {
   const pathToModules = join(__dirname, "../modules");
-  const resolversArray = Glob.sync(`${pathToModules}/**/*.resolver.*`).map(
-    resolver => require(resolver).resolvers,
+  const resolversClassArray = Glob.sync(`${pathToModules}/**/*.resolver.*`).map(
+    resolver => require(resolver),
   );
+  console.log("================");
+  const resolversArray = resolversClassArray.map(
+    item => new item.default().resolvers,
+  );
+  console.log("================");
 
   const typesArray = fileLoader(join(__dirname, "../"), {
     recursive: true,
