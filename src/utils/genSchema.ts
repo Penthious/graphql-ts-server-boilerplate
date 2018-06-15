@@ -32,11 +32,6 @@ export const genSchema = () => {
   const resolversClassArray = Glob.sync(`${pathToModules}/**/*.resolver.*`).map(
     resolver => require(resolver),
   );
-  console.log("================");
-  const resolversArray = resolversClassArray.map(
-    item => new item.default().resolvers,
-  );
-  console.log("================");
 
   const typesArray = fileLoader(join(__dirname, "../"), {
     recursive: true,
@@ -49,7 +44,9 @@ export const genSchema = () => {
 
   const schema = makeExecutableSchema({
     typeDefs,
-    resolvers: mergeResolvers(resolversArray),
+    resolvers: mergeResolvers(
+      resolversClassArray.map(_class => new _class.default().resolvers),
+    ),
   });
 
   return schema;
