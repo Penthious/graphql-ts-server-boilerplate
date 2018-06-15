@@ -52,6 +52,7 @@
     "request-promise": "^4.2.2",
     "sparkpost": "^2.1.2",
     "typeorm": "0.2.7",
+    "typescript-ioc": "^1.2.4",
     "uuid": "^3.2.1",
     "yup": "^0.25.1"
   },
