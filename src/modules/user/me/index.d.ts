@@ -1,4 +1,4 @@
-import { User } from "../../entity/User";
+import { User } from "../../../entity/User";
 
 declare namespace ME {
   interface meResponse {

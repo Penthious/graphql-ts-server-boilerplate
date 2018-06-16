@@ -1,32 +1,8 @@
-// import { GraphQLSchema } from "graphql";
-// import { importSchema } from "graphql-import";
-// import { makeExecutableSchema, mergeSchemas } from "graphql-tools";
-// import { join } from "path";
-// import { readdirSync } from "fs";
-
-// export const genSchema = () => {
-//   const schemas: GraphQLSchema[] = [];
-//   const folders: string[] = readdirSync(join(__dirname, "../modules"));
-//   folders.forEach(folder => {
-//     console.log(folders);
-//     console.log(schemas);
-
-//     const { resolvers } = require(`../modules/${folder}/${folder}.resolver.ts`);
-
-//     const typeDefs = importSchema(
-//       join(__dirname, `../modules/${folder}/${folder}.graphql`),
-//     );
-//     schemas.push(makeExecutableSchema({ resolvers, typeDefs }));
-//   });
-
-//   return mergeSchemas({ schemas });
-// };
-
-import { makeExecutableSchema } from "graphql-tools";
-import { fileLoader, mergeResolvers, mergeTypes } from "merge-graphql-schemas";
-import { join } from "path";
 import * as Glob from "glob";
 import { Container } from "typescript-ioc";
+import { fileLoader, mergeResolvers, mergeTypes } from "merge-graphql-schemas";
+import { join } from "path";
+import { makeExecutableSchema } from "graphql-tools";
 
 export const genSchema = () => {
   const pathToModules = join(__dirname, "../modules");
@@ -46,8 +22,8 @@ export const genSchema = () => {
   const schema = makeExecutableSchema({
     typeDefs,
     resolvers: mergeResolvers(
-      resolversClassArray.map(thisClass =>
-        Container.get(thisClass.default).resolvers
+      resolversClassArray.map(
+        thisClass => Container.get(thisClass.default).resolvers,
       ),
     ),
   });

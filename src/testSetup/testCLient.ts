@@ -8,7 +8,6 @@ import {
 } from "./mutations";
 import { meQuery } from "./queries";
 import { User } from "../entity/User";
-import { LOGOUT } from "../modules/user/logout";
 import { ME } from "../modules/user/me";
 
 export default class TestClient {
