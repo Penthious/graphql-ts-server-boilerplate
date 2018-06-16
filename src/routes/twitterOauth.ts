@@ -19,7 +19,7 @@ export const twitterPassport = (server: GraphQLServer) => {
         const { id, emails } = profile;
         const email: string | undefined = emails ? emails[0].value : undefined;
 
-        let user = await userRepository.findWhere({
+        let user = await userRepository.findWhereIn({
           twitterId: id,
           email,
         });
@@ -32,7 +32,7 @@ export const twitterPassport = (server: GraphQLServer) => {
             email,
           }).save();
 
-          //@todo: Send email to user with new account and account reset link
+          // @todo: Send email to user with new account and account reset link
         } else if (!user.twitterId) {
           await userRepository.update(user.id, { twitterId: id });
         }
@@ -49,7 +49,7 @@ export const twitterPassport = (server: GraphQLServer) => {
     Passport.authenticate("twitter", { session: false }),
     (req: any, res: any) => {
       req.session.userId = req.user.id;
-      //todo: redirect to frontend
+      // todo: redirect to frontend
       res.redirect("/");
     },
   );

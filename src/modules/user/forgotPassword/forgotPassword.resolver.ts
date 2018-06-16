@@ -1,6 +1,5 @@
 import * as yup from "yup";
 
-import UserRepository from "../../../repositories/UserRepository";
 import { createForgotPasswordLink } from "../../../utils/createForgotPasswordLink";
 import { expiredKeyError } from "./errorMessages";
 import { FORGOT_PASSWORD_PREFIX } from "../../../utils/constants";
@@ -11,29 +10,37 @@ import {
   newPasswordKeyValidation,
 } from "../../../utils/yupSchemas";
 import { ResolverMap, Context } from "../../../types/graphql-utils";
-import { User } from "../../../entity/User";
+import UserService from "../../../services/UserService";
+import { Singleton, Inject } from "typescript-ioc";
 
 const schema = yup.object().shape({
   newPassword: passwordValidation,
   key: newPasswordKeyValidation,
 });
 
-export default class forgotPassword {
+@Singleton
+export default class ForgotPassword {
   public resolvers: ResolverMap = {
     Mutation: {
-      sendForgotPasswordEmail: async (_, args, context) =>
-        await this._sendForgotPasswordEmail(_, args, context),
-      forgotPasswordUpdate: async (_, args, context) =>
-        await this._forgotPasswordUpdate(_, args, context),
+      sendForgotPasswordEmail: (_, args, context) =>
+        this._sendForgotPasswordEmail(_, args, context),
+      forgotPasswordUpdate: (_, args, context) =>
+        this._forgotPasswordUpdate(_, args, context),
     },
   };
+  // private userService: UserService;
+
+  constructor(@Inject private userService: UserService) {
+    // this.userService = Container.get(UserService);
+  }
 
   private async _sendForgotPasswordEmail(
     _: any,
     { email }: GQL.ISendForgotPasswordEmailOnMutationArguments,
     { redis }: Context,
   ) {
-    const user = await User.findOne({ where: { email } });
+    const user = await this.userService.findOne({ email });
+    // const user = await User.findOne({ where: { email } });
     if (user) {
       // @todo: add frontend url
       await forgotPasswordLockAccount(user.id, redis);
@@ -68,7 +75,7 @@ export default class forgotPassword {
 
     await redis.del(`${FORGOT_PASSWORD_PREFIX}${key}`);
 
-    await new UserRepository().update(userId, {
+    await this.userService.update(userId, {
       password: newPassword,
       accountLocked: false,
     });

@@ -1,20 +1,21 @@
-import { Connection } from "typeorm";
-
 import TestClient from "../../../testSetup/testCLient";
-import { createTypeormConn } from "../../../utils/createTypeormConn";
+import App from "../../../App";
+import { Container } from "typescript-ioc";
 
 const host = (process.env.TEST_HOST as string) + "/graphql";
 const email: string = "tom@bob.com";
 const password: string = "aoeuaoeuaoeu";
-let conn: Connection;
 const client: TestClient = new TestClient(host);
+const app: App = Container.get(App);
 
 beforeAll(async () => {
-  conn = await createTypeormConn();
+  await app.createConn();
   this.user = await client.createUser();
 });
 
-afterAll(() => conn.close());
+afterAll(async () => {
+  await app.stop();
+});
 
 describe("me", () => {
   test("Can not get user if not logged in", async () => {

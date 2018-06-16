@@ -1,5 +1,3 @@
-import { Connection } from "typeorm";
-
 import TestClient from "../../../testSetup/testCLient";
 import {
   duplicateEmail,
@@ -7,19 +5,21 @@ import {
   invalidEmail,
   passwordNotLongEnough,
 } from "./errorMessages";
-import { createTypeormConn } from "../../../utils/createTypeormConn";
 import { User } from "../../../entity/User";
+import App from "../../../App";
+import { Container } from "typescript-ioc";
 
 const host = (process.env.TEST_HOST as string) + "/graphql";
 const client = new TestClient(host);
-
-let conn: Connection;
+const app: App = Container.get(App);
 
 beforeAll(async () => {
-  conn = await createTypeormConn();
+  await app.createConn();
 });
 
-afterAll(() => conn.close());
+afterAll(async () => {
+  await app.stop();
+});
 
 describe("Register", () => {
   const email: string = "tom@bob.com";

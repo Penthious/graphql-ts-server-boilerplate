@@ -8,11 +8,11 @@ import { Singleton } from "typescript-ioc";
 export default class UserRepository extends Base {
   public async create(params: CreateUserParams) {
     const user = User.create(params);
-    return await this.save(user);
+    return this.save(user);
   }
 
   public async save(user: User) {
-    return await user.save();
+    return user.save();
   }
 
   /**
@@ -22,7 +22,6 @@ export default class UserRepository extends Base {
    * @param params
    */
   public async update(id: string, params: Params) {
-    // @todo: Dont find by id, get logged in user.
     const user = (await User.findOne({ where: { id } })) as UserInterface;
 
     try {
@@ -33,7 +32,9 @@ export default class UserRepository extends Base {
       }
 
       for (const key in params) {
-        user[key] = params[key];
+        if (key) {
+          user[key] = params[key];
+        }
       }
 
       return await this.save(user);
@@ -44,12 +45,25 @@ export default class UserRepository extends Base {
   }
 
   /**
+   *
+   * @param value
+   * @param options?
+   * @returns Promise<User>
+   */
+  public async findOne(value: object | undefined, options?: {}) {
+    return this.getUserRepository().findOne({
+      where: { value },
+      ...options,
+    });
+  }
+
+  /**
    * Find where User.{value} orWhere User.{value}...
    *
    * @param params
    * @returns Promise<User>
    */
-  public async findWhere(params: Params) {
+  public async findWhereIn(params: Params) {
     try {
       const keys = Object.keys(params);
       const query = this.getUserRepository().createQueryBuilder("user");

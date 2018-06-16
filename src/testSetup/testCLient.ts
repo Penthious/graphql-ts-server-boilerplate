@@ -7,9 +7,9 @@ import {
   forgotPasswordMutation,
 } from "./mutations";
 import { meQuery } from "./queries";
-import { ME } from "../modules/me";
 import { User } from "../entity/User";
-import { LOGOUT } from "../modules/logout";
+import { LOGOUT } from "../modules/user/logout";
+import { ME } from "../modules/user/me";
 
 export default class TestClient {
   private options: {
@@ -24,10 +24,8 @@ export default class TestClient {
   private email: string = "tom@bob.com";
   private password: string = "aoeuaoeuaoeu";
 
-  constructor(url: string, email?: string, password?: string) {
+  constructor(url: string) {
     this.url = url;
-    email ? (this.email = email) : null;
-    password ? (this.password = password) : null;
 
     this.options = {
       jar: rp.jar(),
@@ -36,7 +34,13 @@ export default class TestClient {
     };
   }
 
-  async createUser(): Promise<User> {
+  async createUser(
+    email: string | null = null,
+    password: string | null = null,
+  ): Promise<User> {
+    this.email = email || this.email;
+    this.password = password || this.password;
+
     this.user = await User.create({
       email: this.email,
       password: this.password,

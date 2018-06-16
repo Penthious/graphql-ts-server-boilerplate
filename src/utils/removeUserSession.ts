@@ -1,6 +1,9 @@
 import { Redis } from "ioredis";
 import { USER_SESSION_ID_PREFIX, REDIS_SESSION_PREFIX } from "./constants";
-import { redis } from "../redis";
+import GraphqlServer from "../App";
+import { Container } from "typescript-ioc";
+
+const App: GraphqlServer = Container.get(GraphqlServer);
 
 export const removeAllUserSessions = async (userId: string, redis: Redis) => {
   const sessionIds = await redis.lrange(
@@ -15,4 +18,4 @@ export const removeAllUserSessions = async (userId: string, redis: Redis) => {
 };
 
 export const removeSingleSession = async (sessionId: string) =>
-  await redis.del(`${REDIS_SESSION_PREFIX}${sessionId}`);
+  await App.redis.del(`${REDIS_SESSION_PREFIX}${sessionId}`);

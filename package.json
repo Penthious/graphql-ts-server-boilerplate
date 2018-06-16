@@ -5,6 +5,7 @@
   "devDependencies": {
     "@types/bcryptjs": "^2.4.1",
     "@types/connect-redis": "^0.0.7",
+    "@types/dotenv": "^4.0.3",
     "@types/express-rate-limit": "^2.9.3",
     "@types/express-session": "^1.15.10",
     "@types/glob": "^5.0.35",
@@ -58,7 +59,7 @@
   },
   "scripts": {
     "start": "cross-env NODE_ENV=development nodemon --exec ts-node src/index.ts",
-    "test": "cross-env NODE_ENV=test jest --runInBand --forceExit --detectOpenHandles",
+    "test": "cross-env NODE_ENV=test jest --runInBand --detectOpenHandles --verbose --forceExit",
     "gen-schema-types": "ts-node -r dotenv/config src/scripts/createTypes.ts"
   },
   "jest": {

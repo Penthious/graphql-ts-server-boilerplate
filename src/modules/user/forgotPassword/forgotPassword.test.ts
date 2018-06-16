@@ -1,30 +1,32 @@
-import { Connection } from "typeorm";
-
 import TestClient from "../../../testSetup/testCLient";
 import { accountLocked } from "../login/errorMessages";
 import { createForgotPasswordLink } from "../../../utils/createForgotPasswordLink";
-import { createTypeormConn } from "../../../utils/createTypeormConn";
 import { expiredKeyError } from "./errorMessages";
 import { forgotPasswordLockAccount } from "../../../utils/forgotPasswordLockAccount";
 import { passwordNotLongEnough } from "../register/errorMessages";
-import { redis } from "../../../redis";
+import { redis } from "../../../testSetup/redis";
+import App from "../../../App";
+import { Container } from "typescript-ioc";
 
 const host: string = (process.env.TEST_HOST as string) + "/graphql";
 const password: string = "password";
-const client: TestClient = new TestClient(host, undefined, password);
+const client: TestClient = new TestClient(host);
 const newPassword: string = "myNewPasswordi";
-let conn: Connection;
+const app: App = Container.get(App);
 
 beforeAll(async () => {
-  conn = await createTypeormConn();
-  this.user = await client.createUser();
+  await app.createConn();
+
+  this.user = await client.createUser(null, password);
   await forgotPasswordLockAccount(this.user.id, redis);
   const url = await createForgotPasswordLink("", this.user.id, redis);
   const parts = url.split("/");
   this.key = parts[parts.length - 1];
 });
 
-afterAll(() => conn.close());
+afterAll(async () => {
+  await app.stop();
+});
 
 describe("forgot password", () => {
   test("Password is to short", async () => {
@@ -45,6 +47,7 @@ describe("forgot password", () => {
     });
 
     const response = await client.forgotPasswordUpdate(newPassword, this.key);
+    console.log(response);
     expect(response.data).toEqual({
       forgotPasswordUpdate: null,
     });
@@ -74,6 +77,4 @@ describe("forgot password", () => {
       },
     });
   });
-
-  test("Can update password", async () => {});
 });

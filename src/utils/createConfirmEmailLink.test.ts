@@ -1,24 +1,25 @@
 import * as Redis from "ioredis";
 import fetch from "node-fetch";
-
-import { createConfirmEmailLink } from "./createConfirmEmailLink";
-import { createTypeormConn } from "./createTypeormConn";
-import { User } from "../entity/User";
-import { Connection } from "typeorm";
 import TestClient from "../testSetup/testCLient";
+import { createConfirmEmailLink } from "./createConfirmEmailLink";
+import { User } from "../entity/User";
+import App from "../App";
+import { Container } from "typescript-ioc";
 
 const host = process.env.TEST_HOST as string;
 const client = new TestClient(host);
-let conn: Connection;
+const app: App = Container.get(App);
 
 beforeAll(async () => {
-  conn = await createTypeormConn();
+  await app.createConn();
   const user = await client.createUser();
 
   this.userId = user.id;
 });
 
-afterAll(() => conn.close());
+afterAll(async () => {
+  await app.stop();
+});
 
 describe("Email link", () => {
   const redis = new Redis();

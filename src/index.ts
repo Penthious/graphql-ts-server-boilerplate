@@ -1,3 +1,6 @@
-import { startServer } from "./startServer";
+import GraphqlServer from "./App";
+import { Container } from "typescript-ioc";
 
-startServer();
+const app: GraphqlServer = Container.get(GraphqlServer);
+
+app.start();

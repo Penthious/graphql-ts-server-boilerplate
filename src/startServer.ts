@@ -9,7 +9,7 @@ import { GraphQLServer } from "graphql-yoga";
 import { confirmEmail } from "./routes/confirmEmail";
 import { createTypeormConn } from "./utils/createTypeormConn";
 import { genSchema } from "./utils/genSchema";
-import { redis } from "./redis";
+import { redis } from "./testSetup/redis";
 import { REDIS_SESSION_PREFIX } from "./utils/constants";
 import { twitterPassport } from "./routes/twitterOauth";
 

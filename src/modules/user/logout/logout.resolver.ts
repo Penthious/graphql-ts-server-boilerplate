@@ -6,7 +6,7 @@ import {
 export default class Logout {
   public resolvers: ResolverMap = {
     Mutation: {
-      logout: async (_, args, context) => await this._logout(_, args, context),
+      logout: (_, args, context) => this._logout(_, args, context),
     },
   };
 

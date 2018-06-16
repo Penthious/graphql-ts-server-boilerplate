@@ -26,6 +26,7 @@ import { makeExecutableSchema } from "graphql-tools";
 import { fileLoader, mergeResolvers, mergeTypes } from "merge-graphql-schemas";
 import { join } from "path";
 import * as Glob from "glob";
+import { Container } from "typescript-ioc";
 
 export const genSchema = () => {
   const pathToModules = join(__dirname, "../modules");
@@ -45,7 +46,9 @@ export const genSchema = () => {
   const schema = makeExecutableSchema({
     typeDefs,
     resolvers: mergeResolvers(
-      resolversClassArray.map(_class => new _class.default().resolvers),
+      resolversClassArray.map(thisClass =>
+        Container.get(thisClass.default).resolvers
+      ),
     ),
   });
 
