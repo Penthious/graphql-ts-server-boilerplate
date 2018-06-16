@@ -1,9 +1,10 @@
 import fetch from "node-fetch";
+import { Container } from "typescript-ioc";
+
+import App from "../App";
 import TestClient from "../testSetup/testCLient";
 import { createConfirmEmailLink } from "./createConfirmEmailLink";
 import { User } from "../entity/User";
-import App from "../App";
-import { Container } from "typescript-ioc";
 
 const client: TestClient = Container.get(TestClient);
 const app: App = Container.get(App);

@@ -6,10 +6,9 @@ import { v4 } from "uuid";
 
 import SessionService from "./services/Session";
 import { User } from "./entity/User";
+import { Container } from "typescript-ioc";
 
 export default class Logger {
-  private static _instance: Logger;
-
   /* Determines What level < to output.
    * @prop {String}
    */
@@ -70,7 +69,7 @@ export default class Logger {
     "SECURITY_LOW",
   ];
 
-  private sessionService: SessionService = SessionService.$instance;
+  private sessionService: SessionService = Container.get(SessionService);
 
   //   private _type: string = "graphql_server.Logger";
 
@@ -83,10 +82,6 @@ export default class Logger {
    * @return VOID
    */
   private constructor() {
-    if (Logger._instance) {
-      return Logger._instance;
-    }
-
     this.meta = {};
 
     this.transports = {
@@ -102,15 +97,6 @@ export default class Logger {
     });
 
     winston.addColors(this.colors);
-
-    Logger._instance = this;
-  }
-
-  public static get $instance(): Logger {
-    if (this._instance) {
-      return this._instance;
-    }
-    return new Logger();
   }
 
   public set $log_level(level: string) {
@@ -156,7 +142,7 @@ export default class Logger {
       `@param {string} security - "${_securtiyLevels.join("|")}"`,
     );
 
-    const user: User = this.sessionService.$currentUser;
+    const user: User | undefined = this.sessionService.$getUser;
     const _message: any = {};
 
     _message.user = user;

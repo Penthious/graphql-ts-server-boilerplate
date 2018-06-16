@@ -28,9 +28,7 @@ export default class ForgotPassword {
     key: newPasswordKeyValidation,
   });
 
-  constructor(@Inject private userService: UserService) {
-    // this.userService = Container.get(UserService);
-  }
+  constructor(@Inject private userService: UserService) {}
 
   private async _forgotPasswordUpdate(
     _: any,

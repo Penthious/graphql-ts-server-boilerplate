@@ -1,8 +1,7 @@
 import { Context, ResolverMap } from "../../../types/graphql-utils";
-import {
-  removeAllUserSessions,
-  removeSingleSession,
-} from "../../../utils/removeUserSession";
+import { Inject } from "typescript-ioc";
+
+import SessionService from "../../../services/Session";
 
 export default class Logout {
   public resolvers: ResolverMap = {
@@ -11,16 +10,18 @@ export default class Logout {
     },
   };
 
+  constructor(@Inject private sessionService: SessionService) {}
+
   private async _logout(
     _: any,
     { multi }: GQL.ILogoutOnMutationArguments,
-    { redis, request, session }: Context,
+    { request, session, redis }: Context,
   ) {
     const { userId } = session;
     if (userId && multi) {
-      await removeAllUserSessions(userId, redis);
+      await this.sessionService.removeAllUserSessions(userId, redis);
     } else if (userId && !multi) {
-      await removeSingleSession(request.sessionID!);
+      await this.sessionService.removeSingleSession(request.sessionID!, redis);
     }
     return null;
   }

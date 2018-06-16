@@ -1,31 +1,49 @@
 import { Singleton } from "typescript-ioc";
+
 import { User } from "../entity/User";
+import {
+  USER_SESSION_ID_PREFIX,
+  REDIS_SESSION_PREFIX,
+} from "../utils/constants";
+import { Redis } from "ioredis";
 
 // const LOG_MODULE_NAME = "graphql-server.SessionService";
 
 @Singleton
 export default class SessionService {
-  private static _instance: SessionService = new SessionService();
+  private _currentUser: User | undefined;
 
-  private currentUser: User;
+  private constructor() {}
 
-  private constructor() {
-    if (SessionService._instance) {
-      return SessionService._instance;
+  public set $setUser(user: User) {
+    this._currentUser = user;
+  }
+
+  public get $getUser() {
+    if (this._currentUser) {
+      return this._currentUser;
     }
 
-    SessionService._instance = this;
+    return undefined;
   }
 
-  public static get $instance(): SessionService {
-    return this._instance;
+  public async removeSingleSession(sessionId: string, redis: Redis) {
+    this._currentUser = undefined;
+
+    redis.del(`${REDIS_SESSION_PREFIX}${sessionId}`);
   }
 
-  public set $currentUser(user: User) {
-    this.currentUser = user;
-  }
+  public removeAllUserSessions = async (userId: string, redis: Redis) => {
+    this._currentUser = undefined;
 
-  public get $currentUser() {
-    return this.currentUser;
-  }
+    const sessionIds = await redis.lrange(
+      `${USER_SESSION_ID_PREFIX}${userId}`,
+      0,
+      -1,
+    );
+
+    sessionIds.forEach(async (id: string) =>
+      redis.del(`${REDIS_SESSION_PREFIX}${id}`),
+    );
+  };
 }

@@ -1,12 +1,14 @@
+import { Container } from "typescript-ioc";
 import { Redis } from "ioredis";
 
-import { removeAllUserSessions } from "./removeUserSession";
+import SessionService from "../services/Session";
 import { User } from "../entity/User";
+const sessionService: SessionService = Container.get(SessionService);
 
 export const forgotPasswordLockAccount = async (
   userId: string,
   redis: Redis,
 ) => {
   await User.update({ id: userId }, { accountLocked: true });
-  await removeAllUserSessions(userId, redis);
+  sessionService.removeAllUserSessions(userId, redis);
 };

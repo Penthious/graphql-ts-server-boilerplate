@@ -6,7 +6,7 @@ import * as Redis from "ioredis";
 import * as session from "express-session";
 import * as morgan from "morgan";
 import * as bodyParser from "body-parser";
-import { Inject, Singleton } from "typescript-ioc";
+import { Inject, Singleton, Container } from "typescript-ioc";
 import { Connection, createConnection } from "typeorm";
 import { GraphQLServer } from "graphql-yoga";
 
@@ -25,7 +25,7 @@ export default class App {
 
   private _name: string = "graphql_server.App";
   private connection: Connection;
-  private logger: Logger = Logger.$instance;
+  private logger: Logger = Container.get(Logger);
   private redisStore = connectRedis(session);
 
   constructor(@Inject private graphqlServerConfig: GraphqlServerConfig) {
@@ -56,6 +56,14 @@ export default class App {
    * Wrapper to Terminate the TypeORM Db Connection
    */
   public async stop() {
+    this.logger.log(
+      "INFO",
+      `${this._name}#stop`,
+      {
+        message: "App connection to database is now being closed",
+      },
+      "SECURITY_LOW",
+    );
     return this.stopConnection();
   }
 
@@ -124,6 +132,17 @@ export default class App {
       this.connection = await createConnection(config);
       return this.connection;
     } catch (error) {
+      this.logger.log(
+        "ERROR",
+        `${this._name}#createConn`,
+        {
+          message:
+            "There seems to have been an issue connecting to the database maby check your CONFIG",
+          config,
+          error: error.message,
+        },
+        "SECURITY_HIGH",
+      );
       throw new Error(error);
     }
   }
@@ -148,18 +167,19 @@ export default class App {
    * so that users can not spam our endpoints
    */
   private setupRateLimit() {
-    if (this.graphqlServerConfig.$env === "production") {
-      this.server.express.use(
-        new RateLimit({
-          store: new RateLimitRedis({
-            client: this.redis,
-          }),
-          windowMs: 15 * 60 * 1000, // 15 minutes
-          max: 100, // requests
-          delayMs: 0,
-        }),
-      );
+    if (this.graphqlServerConfig.$env !== "production") {
+      return;
     }
+    this.server.express.use(
+      new RateLimit({
+        store: new RateLimitRedis({
+          client: this.redis,
+        }),
+        windowMs: 15 * 60 * 1000, // 15 minutes
+        max: 100, // requests
+        delayMs: 0,
+      }),
+    );
   }
 
   /**
@@ -193,6 +213,9 @@ export default class App {
    * along with the values
    */
   private setupMorgan() {
+    if (this.graphqlServerConfig.$env === "test") {
+      return;
+    }
     morgan.token("graphql-query", (req: any) => {
       const { query, variables, operationName } = req.body;
       return `GRAPHQL: \nOperation Name: ${operationName} \nQuery: ${query} \nVariables: ${JSON.stringify(
@@ -219,19 +242,33 @@ export default class App {
    * Creates our express/graphql app
    */
   private async createApp() {
-    await this.createConn(this.connectionOptions);
+    try {
+      await this.createConn(this.connectionOptions);
 
-    this.createServer();
+      this.createServer();
 
-    this.setupRateLimit();
+      this.setupRateLimit();
 
-    this.setupSession();
+      this.setupSession();
 
-    this.setupMorgan();
+      this.setupMorgan();
 
-    this.setupRoutes();
+      this.setupRoutes();
 
-    return this.server;
+      return this.server;
+    } catch (error) {
+      this.logger.log(
+        "ERROR",
+        `${this._name}#createApp`,
+        {
+          message: "There seems to have been a issue starting the app",
+          error: error.message,
+        },
+        "SECURITY_HIGH",
+      );
+
+      throw new Error(error);
+    }
   }
 
   /**

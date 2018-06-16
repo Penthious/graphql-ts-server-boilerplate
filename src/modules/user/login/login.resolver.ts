@@ -1,6 +1,7 @@
 import { compare } from "bcryptjs";
 import { Singleton, Inject } from "typescript-ioc";
 
+import SessionService from "../../../services/Session";
 import UserService from "../../../services/UserService";
 import { Context, ResolverMap } from "../../../types/graphql-utils";
 import {
@@ -18,7 +19,10 @@ export default class Login {
     },
   };
 
-  constructor(@Inject private userService: UserService) {}
+  constructor(
+    @Inject private userService: UserService,
+    @Inject private sessionService: SessionService,
+  ) {}
 
   private async _login(
     _: any,
@@ -54,6 +58,9 @@ export default class Login {
     }
 
     session.userId = user.id;
+
+    this.sessionService.$setUser = user;
+
     if (request.sessionID) {
       await redis.lpush(
         `${USER_SESSION_ID_PREFIX}${user.id}`,
