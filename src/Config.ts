@@ -2,8 +2,11 @@ import * as assert from "assert";
 import * as pjson from "pjson";
 import * as process from "process";
 import { config } from "dotenv";
-import { Singleton } from "typescript-ioc";
+import { Container, Singleton } from "typescript-ioc";
 
+import Logger from "./Logger";
+
+const logger: Logger = Container.get(Logger);
 const dotenvPath = `${__dirname}/../.env-${process.env.NODE_ENV}`;
 config({ path: `${dotenvPath}` });
 
@@ -131,28 +134,22 @@ export default class GraphqlServerConfig {
 
     // this.logger.logLevel = this.$log_level;
 
-    // this.logger.log("INFO", "CONFIG", {
-    //   message: "flightboard-configuration",
-    //   config: {
-    //     app_version: this.app_version,
-    //     cors_origin: this.cors_origin,
-    //     database_host: this.database_host,
-    //     database_name: this.database_name,
-    //     database_password: this.database_password,
-    //     database_port: this.database_port,
-    //     database_username: this.database_username,
-    //     env: this.env,
-    //     //jwt_public_key: this.jwt_public_key,
-    //     koa_app_port: this.koa_app_port,
-    //     log_level: this.log_level,
-    //     service_name: this.service_name,
-    //     teem_frontend_host: this.teem_frontend_host,
-    //     teem_host: this.teem_host,
-    //     telegraf_debug: this.telegraf_debug,
-    //     telegraf_host: this.telegraf_host,
-    //     telegraf_port: this.telegraf_port,
-    //   },
-    // });
+    logger.log("INFO", "CONFIG", {
+      message: "graphql-server-configuration",
+      config: {
+        app_version: this.APP_VERSION,
+        cors_origin: this.CORS_ORIGIN,
+        database_host: this.DATABASE_HOST,
+        database_name: this.DATABASE_NAME,
+        database_password: this.DATABASE_PASSWORD,
+        database_port: this.DATABASE_PORT,
+        database_username: this.DATABASE_USERNAME,
+        env: this.ENV,
+        // log_level: this.log_level,
+        service_name: this.SERVICE_NAME,
+        frontend_host: this.FRONTEND_HOST,
+      },
+    });
   }
 
   public get $app_version(): string {
