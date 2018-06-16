@@ -1,75 +1,75 @@
 import * as assert from "assert";
+import * as pjson from "pjson"
 import * as process from "process";
 import { Singleton } from "typescript-ioc";
 import { config } from "dotenv";
 
-const pjson = require("../package.json");
-const dotenv_path = `${__dirname}/../.env-${process.env.NODE_ENV}`;
-config({ path: `${dotenv_path}` });
+const dotenvPath = `${__dirname}/../.env-${process.env.NODE_ENV}`;
+config({ path: `${dotenvPath}` });
 
 @Singleton
 export default class GraphqlServerConfig {
-  private app_version: string;
-  private cors_origin: string;
-  private database_host: string;
-  private database_name: string;
-  private database_password: string;
-  private database_port: number;
-  private database_username: string;
-  private env: string;
-  private express_app_port: number;
-  private frontend_host: string;
-  private service_name: string;
-  private session_secret: string;
-  private sparkpost_api_key: string;
-  private twitter_consumer_key: string;
-  private twitter_consumer_secret: string;
+  private APP_VERSION: string;
+  private CORS_ORIGIN: string;
+  private DATABASE_HOST: string;
+  private DATABASE_NAME: string;
+  private DATABASE_PASSWORD: string;
+  private DATABASE_PORT: number;
+  private DATABASE_USERNAME: string;
+  private ENV: string;
+  private EXPRESS_APP_PORT: number;
+  private FRONTEND_HOST: string;
+  private SERVICE_NAME: string;
+  private SESSION_SECRET: string;
+  private SPARKPOST_API_KEY: string;
+  private TWITTER_CONSUMER_KEY: string;
+  private TWITTER_CONSUMER_SECRET: string;
 
   constructor() {
-    this.app_version = pjson.version;
+    this.APP_VERSION = pjson.version;
 
     // MUST check NODE_ENV first
     assert(
       process.env.NODE_ENV as string,
       `No environmental variable with key "NODE_ENV" is set."`,
     );
-    this.env = process.env.NODE_ENV as string;
+    this.ENV = process.env.NODE_ENV as string;
 
     assert(
       process.env.CORS_ORIGIN,
       `No environmental variable with key "CORS_ORIGIN" is set."`,
     );
-    this.cors_origin = process.env.CORS_ORIGIN as string;
+    this.CORS_ORIGIN = process.env.CORS_ORIGIN as string;
 
     assert(
       process.env.DATABASE_HOST,
       `No environmental variable with key "DATABASE_HOST" is set."`,
     );
-    this.database_host = process.env.DATABASE_HOST as string;
+    this.DATABASE_HOST = process.env.DATABASE_HOST as string;
 
     assert(
       process.env.DATABASE_NAME,
       `No environmental variable with key "DATABASE_NAME" is set."`,
     );
-    this.database_name = process.env.DATABASE_NAME as string;
+    this.DATABASE_NAME = process.env.DATABASE_NAME as string;
 
     assert(
       process.env.DATABASE_PASSWORD,
       `No environmental variable with key "DATABASE_PASSWORD" is set."`,
     );
-    this.database_password = process.env.DATABASE_PASSWORD as string;
+    this.DATABASE_PASSWORD = process.env.DATABASE_PASSWORD as string;
 
     assert(
       process.env.DATABASE_PORT,
       `No environmental variable with key "DATABASE_PORT" is set."`,
     );
-    this.database_port = parseInt(process.env.DATABASE_PORT as string);
+    this.DATABASE_PORT = parseInt(process.env.DATABASE_PORT as string, 10);
 
     assert(
       process.env.DATABASE_USERNAME,
       `No environmental variable with key "DATABASE_USERNAME" is set."`,
     );
-    this.database_username = process.env.DATABASE_USERNAME as string;
+    this.DATABASE_USERNAME = process.env.DATABASE_USERNAME as string;
 
     // assert(
     //   process.env.LOG_LEVEL,
@@ -81,43 +81,43 @@ export default class GraphqlServerConfig {
       process.env.EXPRESS_APP_PORT,
       `No environmental variable with key "EXPRESS_APP_PORT" is set."`,
     );
-    this.express_app_port = parseInt(process.env.EXPRESS_APP_PORT as string);
+    this.EXPRESS_APP_PORT = parseInt(process.env.EXPRESS_APP_PORT as string, 10);
 
     assert(
       process.env.FRONTEND_HOST,
       `No environmental variable with key "FRONTEND_HOST" is set."`,
     );
-    this.frontend_host = process.env.FRONTEND_HOST as string;
+    this.FRONTEND_HOST = process.env.FRONTEND_HOST as string;
 
     assert(
       process.env.SERVICE_NAME,
       `No environmental variable with key "SERVICE_NAME" is set."`,
     );
-    this.service_name = process.env.SERVICE_NAME as string;
+    this.SERVICE_NAME = process.env.SERVICE_NAME as string;
 
     assert(
       process.env.SESSION_SECRET,
       `No environmental variable with key "SESSION_SECRET" is set."`,
     );
-    this.session_secret = process.env.SESSION_SECRET as string;
+    this.SESSION_SECRET = process.env.SESSION_SECRET as string;
 
     assert(
       process.env.SPARKPOST_API_KEY,
       `No environmental variable with key "SPARKPOST_API_KEY" is set."`,
     );
-    this.sparkpost_api_key = process.env.SPARKPOST_API_KEY as string;
+    this.SPARKPOST_API_KEY = process.env.SPARKPOST_API_KEY as string;
 
     assert(
       process.env.TWITTER_CONSUMER_KEY,
       `No environmental variable with key "TWITTER_CONSUMER_KEY" is set."`,
     );
-    this.twitter_consumer_key = process.env.TWITTER_CONSUMER_KEY as string;
+    this.TWITTER_CONSUMER_KEY = process.env.TWITTER_CONSUMER_KEY as string;
 
     assert(
       process.env.TWITTER_CONSUMER_SECRET,
       `No environmental variable with key "TWITTER_CONSUMER_SECRET" is set."`,
     );
-    this.twitter_consumer_secret = process.env
+    this.TWITTER_CONSUMER_SECRET = process.env
       .TWITTER_CONSUMER_SECRET as string;
 
     // this.logger.logLevel = this.$log_level;
@@ -147,62 +147,62 @@ export default class GraphqlServerConfig {
   }
 
   public get $app_version(): string {
-    return this.app_version;
+    return this.APP_VERSION;
   }
 
   public get $cors_origin(): string {
-    return this.cors_origin;
+    return this.CORS_ORIGIN;
   }
 
   public get $database_host(): string {
-    return this.database_host;
+    return this.DATABASE_HOST;
   }
 
   public get $database_name(): string {
-    return this.database_name;
+    return this.DATABASE_NAME;
   }
 
   public get $database_password(): string {
-    return this.database_password;
+    return this.DATABASE_PASSWORD;
   }
 
   public get $database_port(): number {
-    return this.database_port;
+    return this.DATABASE_PORT;
   }
 
   public get $database_username(): string {
-    return this.database_username;
+    return this.DATABASE_USERNAME;
   }
 
   public get $env(): string {
-    return this.env;
+    return this.ENV;
   }
 
   public get $express_app_port(): number {
-    return this.express_app_port;
+    return this.EXPRESS_APP_PORT;
   }
 
   public get $frontend_host(): string {
-    return this.frontend_host;
+    return this.FRONTEND_HOST;
   }
 
   public get $service_name(): string {
-    return this.service_name;
+    return this.SERVICE_NAME;
   }
 
   public get $session_secret(): string {
-    return this.session_secret;
+    return this.SESSION_SECRET;
   }
 
   public get $sparkpost_api_key(): string {
-    return this.sparkpost_api_key;
+    return this.SPARKPOST_API_KEY;
   }
 
   public get $twitter_consumer_key(): string {
-    return this.twitter_consumer_key;
+    return this.TWITTER_CONSUMER_KEY;
   }
 
   public get $twitter_consumer_secret(): string {
-    return this.twitter_consumer_secret;
+    return this.TWITTER_CONSUMER_SECRET;
   }
 }

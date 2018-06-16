@@ -1,4 +1,3 @@
-import * as Redis from "ioredis";
 import fetch from "node-fetch";
 import TestClient from "../testSetup/testCLient";
 import { createConfirmEmailLink } from "./createConfirmEmailLink";
@@ -22,10 +21,8 @@ afterAll(async () => {
 });
 
 describe("Email link", () => {
-  const redis = new Redis();
-
   test("Make sure it confirms user and clears key in redis", async () => {
-    const url = await createConfirmEmailLink(host, this.userId, redis);
+    const url = await createConfirmEmailLink(host, this.userId, app.redis);
     const response = await fetch(url);
     const text = await response.text();
 
@@ -36,7 +33,7 @@ describe("Email link", () => {
 
     const key = url.split("/").pop() as string;
 
-    const value = await redis.get(key);
+    const value = await app.redis.get(key);
     expect(value).toBeNull();
   });
 

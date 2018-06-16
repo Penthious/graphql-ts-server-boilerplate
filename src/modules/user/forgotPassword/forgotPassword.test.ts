@@ -4,7 +4,6 @@ import { createForgotPasswordLink } from "../../../utils/createForgotPasswordLin
 import { expiredKeyError } from "./errorMessages";
 import { forgotPasswordLockAccount } from "../../../utils/forgotPasswordLockAccount";
 import { passwordNotLongEnough } from "../register/errorMessages";
-import { redis } from "../../../testSetup/redis";
 import App from "../../../App";
 import { Container } from "typescript-ioc";
 
@@ -18,8 +17,8 @@ beforeAll(async () => {
   await app.createConn();
 
   this.user = await client.createUser(null, password);
-  await forgotPasswordLockAccount(this.user.id, redis);
-  const url = await createForgotPasswordLink("", this.user.id, redis);
+  await forgotPasswordLockAccount(this.user.id, app.redis);
+  const url = await createForgotPasswordLink("", this.user.id, app.redis);
   const parts = url.split("/");
   this.key = parts[parts.length - 1];
 });

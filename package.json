@@ -48,6 +48,7 @@
     "passport": "^0.4.0",
     "passport-twitter": "^1.0.4",
     "pg": "^7.4.3",
+    "pjson": "^1.0.9",
     "rate-limit-redis": "^1.5.0",
     "reflect-metadata": "^0.1.12",
     "request-promise": "^4.2.2",

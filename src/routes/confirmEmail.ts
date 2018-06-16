@@ -1,13 +1,15 @@
-import { User } from "../entity/User";
+import { Container } from "typescript-ioc";
 import { Request, Response } from "express";
-import { redis } from "../testSetup/redis";
+import { User } from "../entity/User";
+import App from "../App";
 
 export const confirmEmail = async (req: Request, res: Response) => {
+  const app: App = Container.get(App);
   const { id }: { id: string } = req.params;
-  const userId = await redis.get(id);
+  const userId = await app.redis.get(id);
   if (userId) {
     await User.update({ id: userId }, { confirmed: true });
-    await redis.del(id);
+    await app.redis.del(id);
 
     res.send("ok");
   } else {

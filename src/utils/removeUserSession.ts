@@ -12,10 +12,10 @@ export const removeAllUserSessions = async (userId: string, redis: Redis) => {
     -1,
   );
 
-  sessionIds.forEach(
-    async (id: string) => await redis.del(`${REDIS_SESSION_PREFIX}${id}`),
+  sessionIds.forEach(async (id: string) =>
+    redis.del(`${REDIS_SESSION_PREFIX}${id}`),
   );
 };
 
 export const removeSingleSession = async (sessionId: string) =>
-  await App.redis.del(`${REDIS_SESSION_PREFIX}${sessionId}`);
+  App.redis.del(`${REDIS_SESSION_PREFIX}${sessionId}`);
