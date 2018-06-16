@@ -18,6 +18,7 @@ export default class GraphqlServerConfig {
   private DATABASE_USERNAME: string;
   private ENV: string;
   private EXPRESS_APP_PORT: number;
+  private EXPRESS_APP_URL: string;
   private FRONTEND_HOST: string;
   private SERVICE_NAME: string;
   private SESSION_SECRET: string;
@@ -85,6 +86,11 @@ export default class GraphqlServerConfig {
       process.env.EXPRESS_APP_PORT as string,
       10,
     );
+    assert(
+      process.env.EXPRESS_APP_URL,
+      `No environmental variable with key "EXPRESS_APP_URL" is set."`,
+    );
+    this.EXPRESS_APP_URL = process.env.EXPRESS_APP_PORT as string;
 
     assert(
       process.env.FRONTEND_HOST,
@@ -183,6 +189,10 @@ export default class GraphqlServerConfig {
 
   public get $express_app_port(): number {
     return this.EXPRESS_APP_PORT;
+  }
+
+  public get $express_app_url(): string {
+    return this.EXPRESS_APP_URL;
   }
 
   public get $frontend_host(): string {

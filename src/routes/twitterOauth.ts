@@ -3,35 +3,40 @@ import { GraphQLServer } from "graphql-yoga";
 import { Strategy as TwitterStrategy } from "passport-twitter";
 import { v4 } from "uuid";
 
+import GraphQLConfig from "../Config";
 import UserRepository from "../repositories/UserRepository";
-import { User } from "../entity/User";
+import { Container } from "typescript-ioc";
+import UserService from "../services/UserService";
+
+const config: GraphQLConfig = Container.get(GraphQLConfig);
+const userService: UserService = Container.get(UserService);
 
 export const twitterPassport = (server: GraphQLServer) => {
   const userRepository = new UserRepository();
   Passport.use(
     new TwitterStrategy(
       {
-        consumerKey: process.env.TWITTER_CONSUMER_KEY as string,
-        consumerSecret: process.env.TWITTER_CONSUMER_SECRET as string,
-        callbackURL: "http://localhost:4000/auth/twitter/callback",
+        consumerKey: config.$twitter_consumer_key,
+        consumerSecret: config.$twitter_consumer_secret,
+        callbackURL: `${config.$express_app_url}/auth/twitter/callback`,
         includeEmail: true,
       },
       async (_, __, profile, cb) => {
         const { id, emails } = profile;
         const email: string | undefined = emails ? emails[0].value : undefined;
 
-        let user = await userRepository.findWhereIn({
+        let user = await userService.findWhereIn({
           twitterId: id,
           email,
         });
 
         if (!user) {
           const password = v4();
-          user = await User.create({
+          user = await userService.create({
             twitterId: id,
             password,
-            email,
-          }).save();
+            email: email || "updateme@updateme.com",
+          })
 
           // @todo: Send email to user with new account and account reset link
         } else if (!user.twitterId) {
@@ -50,8 +55,7 @@ export const twitterPassport = (server: GraphQLServer) => {
     Passport.authenticate("twitter", { session: false }),
     (req: any, res: any) => {
       req.session.userId = req.user.id;
-      // todo: redirect to frontend
-      res.redirect("/");
+      res.redirect(config.$frontend_host);
     },
   );
   return Passport;
