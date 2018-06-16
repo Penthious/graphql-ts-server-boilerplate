@@ -4,6 +4,8 @@ import * as RateLimit from "express-rate-limit";
 import * as RateLimitRedis from "rate-limit-redis";
 import * as Redis from "ioredis";
 import * as session from "express-session";
+import * as morgan from "morgan";
+import * as bodyParser from "body-parser";
 import { Inject, Singleton } from "typescript-ioc";
 import { Connection, createConnection } from "typeorm";
 import { GraphQLServer } from "graphql-yoga";
@@ -13,16 +15,18 @@ import { confirmEmail } from "./routes/confirmEmail";
 import { genSchema } from "./utils/genSchema";
 import { REDIS_SESSION_PREFIX } from "./utils/constants";
 import { twitterPassport } from "./routes/twitterOauth";
+import Logger from "./Logger";
 
 @Singleton
 export default class App {
-  //   private _name: string = "graphql_server.App";
   public connectionOptions = this.setupOrmConfigOptions();
   public redis: Redis.Redis;
   public server: GraphQLServer;
-  private connection: Connection;
 
-  private RedisStore = connectRedis(session);
+  private _name: string = "graphql_server.App";
+  private connection: Connection;
+  private logger: Logger = Logger.$instance;
+  private redisStore = connectRedis(session);
 
   constructor(@Inject private graphqlServerConfig: GraphqlServerConfig) {
     this.redis = new Redis();
@@ -36,7 +40,15 @@ export default class App {
     const server = this.createApp();
     const options = this.setupConnectionOptions();
 
-    console.log(`Server is running on port: ${options.port}`);
+    this.logger.log(
+      "INFO",
+      `${this._name}#start`,
+      {
+        message: `App has started on port: ${options.port}`,
+      },
+      "SECURITY_LOW",
+    );
+
     return (await server).start(options);
   }
 
@@ -47,6 +59,11 @@ export default class App {
     return this.stopConnection();
   }
 
+  /**
+   * Sets the settings for orm config thes way we
+   * can have a dynamic connection to the database
+   * deppending on your .env and NODE_ENV
+   */
   public setupOrmConfigOptions() {
     return {
       name: "default",
@@ -70,6 +87,10 @@ export default class App {
     };
   }
 
+  /**
+   * Sets up the graphql server default options
+   * IE: Cors, port, and endpoints
+   */
   public setupConnectionOptions(): {
     cors: { credentials: boolean; origin: string };
     port: number;
@@ -91,6 +112,13 @@ export default class App {
     };
   }
 
+  /**
+   * Creates a connection to our database
+   * You can pass your own connection options into
+   * here if not then it will default to the one
+   * defined above,
+   * @param config
+   */
   public async createConn(config: any = this.setupOrmConfigOptions()) {
     try {
       this.connection = await createConnection(config);
@@ -100,9 +128,11 @@ export default class App {
     }
   }
 
-  private async createApp() {
-    await this.createConn(this.connectionOptions);
-    const server = new GraphQLServer({
+  /**
+   * Creates the graphql server
+   */
+  private createServer() {
+    this.server = new GraphQLServer({
       schema: genSchema(),
       context: ({ request }) => ({
         request,
@@ -111,23 +141,35 @@ export default class App {
         url: `${request.protocol}://${request.get("host")}`,
       }),
     });
+  }
 
+  /**
+   * Sets up the rate limit for our site
+   * so that users can not spam our endpoints
+   */
+  private setupRateLimit() {
     if (this.graphqlServerConfig.$env === "production") {
-      server.express.use(
+      this.server.express.use(
         new RateLimit({
           store: new RateLimitRedis({
             client: this.redis,
           }),
           windowMs: 15 * 60 * 1000, // 15 minutes
-          max: 100,
+          max: 100, // requests
           delayMs: 0,
         }),
       );
     }
+  }
 
-    server.express.use(
+  /**
+   * Sets up our session so that we can have access
+   * to cookies and our user
+   */
+  private setupSession() {
+    this.server.express.use(
       session({
-        store: new this.RedisStore({
+        store: new this.redisStore({
           client: this.redis as any,
           prefix: REDIS_SESSION_PREFIX,
         }),
@@ -142,14 +184,54 @@ export default class App {
         },
       }),
     );
+  }
 
-    server.express.get("/confirm/:id", confirmEmail);
+  /**
+   * Sets up morgan a endpoint logger to see what endpoints
+   * users are hitting, in this case we are using it to
+   * log out the mutiations and queries users and doing
+   * along with the values
+   */
+  private setupMorgan() {
+    morgan.token("graphql-query", (req: any) => {
+      const { query, variables, operationName } = req.body;
+      return `GRAPHQL: \nOperation Name: ${operationName} \nQuery: ${query} \nVariables: ${JSON.stringify(
+        variables,
+      )}`;
+    });
+    this.server.express.use(bodyParser.json());
+    this.server.express.use(morgan(":graphql-query"));
+  }
 
-    server.express.use(twitterPassport(server).initialize());
+  /**
+   * Sets up our static routes that are being used
+   * from express, this is not our graphql endpoints
+   * but the routes to login through Oauth or forgot password
+   */
+  private setupRoutes() {
+    // Setups forgot password route
+    this.server.express.get("/confirm/:id", confirmEmail);
+    // Setups twitter routes
+    this.server.express.use(twitterPassport(this.server).initialize());
+  }
 
-    this.server = server;
+  /**
+   * Creates our express/graphql app
+   */
+  private async createApp() {
+    await this.createConn(this.connectionOptions);
 
-    return server;
+    this.createServer();
+
+    this.setupRateLimit();
+
+    this.setupSession();
+
+    this.setupMorgan();
+
+    this.setupRoutes();
+
+    return this.server;
   }
 
   /**
