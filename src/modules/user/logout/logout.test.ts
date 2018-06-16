@@ -1,13 +1,13 @@
-import TestClient from "../../../testSetup/testCLient";
 import { Container } from "typescript-ioc";
-import App from "../../../App";
 
-const host = (process.env.TEST_HOST as string) + "/graphql";
-const client = new TestClient(host);
-const client2 = new TestClient(host);
+import App from "../../../App";
+import TestClient from "../../../testSetup/testCLient";
+
+const app: App = Container.get(App);
+const client2: TestClient = Container.get(TestClient);
+const client: TestClient = Container.get(TestClient);
 const email: string = "tom@bob.com";
 const password: string = "aoeuaoeuaoeu";
-const app: App = Container.get(App);
 
 beforeAll(async () => {
   await app.createConn();

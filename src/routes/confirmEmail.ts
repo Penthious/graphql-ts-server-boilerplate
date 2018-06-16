@@ -1,7 +1,8 @@
 import { Container } from "typescript-ioc";
-import { Request, Response } from "express";
-import { User } from "../entity/User";
+import { Response, Request } from "express";
+
 import App from "../App";
+import { User } from "../entity/User";
 
 export const confirmEmail = async (req: Request, res: Response) => {
   const app: App = Container.get(App);

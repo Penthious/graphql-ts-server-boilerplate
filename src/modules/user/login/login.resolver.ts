@@ -1,13 +1,14 @@
-import { ResolverMap, Context } from "../../../types/graphql-utils";
 import { compare } from "bcryptjs";
+import { Singleton, Inject } from "typescript-ioc";
+
+import UserService from "../../../services/UserService";
+import { Context, ResolverMap } from "../../../types/graphql-utils";
 import {
-  invalidLogin,
-  confirmEmailError,
   accountLocked,
+  confirmEmailError,
+  invalidLogin,
 } from "./errorMessages";
 import { USER_SESSION_ID_PREFIX } from "../../../utils/constants";
-import { Singleton, Inject } from "typescript-ioc";
-import UserService from "../../../services/UserService";
 
 @Singleton
 export default class Login {

@@ -1,8 +1,8 @@
 import * as assert from "assert";
-import * as pjson from "pjson"
+import * as pjson from "pjson";
 import * as process from "process";
-import { Singleton } from "typescript-ioc";
 import { config } from "dotenv";
+import { Singleton } from "typescript-ioc";
 
 const dotenvPath = `${__dirname}/../.env-${process.env.NODE_ENV}`;
 config({ path: `${dotenvPath}` });
@@ -81,7 +81,10 @@ export default class GraphqlServerConfig {
       process.env.EXPRESS_APP_PORT,
       `No environmental variable with key "EXPRESS_APP_PORT" is set."`,
     );
-    this.EXPRESS_APP_PORT = parseInt(process.env.EXPRESS_APP_PORT as string, 10);
+    this.EXPRESS_APP_PORT = parseInt(
+      process.env.EXPRESS_APP_PORT as string,
+      10,
+    );
 
     assert(
       process.env.FRONTEND_HOST,

@@ -1,31 +1,34 @@
-import * as rp from "request-promise";
 import * as request from "request";
+import * as rp from "request-promise";
+
+import UserService from "../services/UserService";
 import {
+  forgotPasswordMutation,
   loginMutation,
   logoutMutation,
   registerMutation,
-  forgotPasswordMutation,
 } from "./mutations";
+import { Inject, Singleton } from "typescript-ioc";
+import { ME } from "../modules/user/me";
 import { meQuery } from "./queries";
 import { User } from "../entity/User";
-import { ME } from "../modules/user/me";
 
+@Singleton
 export default class TestClient {
+  public url: string = process.env.TEST_HOST as string;
+
   private options: {
     jar: request.CookieJar;
     json: boolean;
     withCredentials: boolean;
   };
 
-  private url: string;
-
-  private user: User;
   private email: string = "tom@bob.com";
+  private graphqlUrl: string = `${this.url}/graphql`;
   private password: string = "aoeuaoeuaoeu";
+  private user: User;
 
-  constructor(url: string) {
-    this.url = url;
-
+  constructor(@Inject private userService: UserService) {
     this.options = {
       jar: rp.jar(),
       json: true,
@@ -40,11 +43,11 @@ export default class TestClient {
     this.email = email || this.email;
     this.password = password || this.password;
 
-    this.user = await User.create({
+    this.user = await this.userService.create({
       email: this.email,
       password: this.password,
       confirmed: true,
-    }).save();
+    });
 
     return this.user;
   }
@@ -60,7 +63,7 @@ export default class TestClient {
     | FORGOTPASSWORD.forgotPasswordChange
     | FORGOTPASSWORD.forgotPasswordChangeError
   > {
-    return rp.post(this.url, {
+    return rp.post(this.graphqlUrl, {
       ...this.options,
       body: {
         query: forgotPasswordMutation(newPassword, key),
@@ -71,7 +74,7 @@ export default class TestClient {
     email: string,
     password: string,
   ): Promise<LOGIN.login | LOGIN.loginError> {
-    return rp.post(this.url, {
+    return rp.post(this.graphqlUrl, {
       ...this.options,
       body: {
         query: loginMutation(email, password),
@@ -80,7 +83,7 @@ export default class TestClient {
   }
 
   async logout(multi: boolean): Promise<LOGOUT.logout> {
-    return rp.post(this.url, {
+    return rp.post(this.graphqlUrl, {
       ...this.options,
       body: {
         query: logoutMutation(multi),
@@ -89,7 +92,7 @@ export default class TestClient {
   }
 
   async me(): Promise<ME.meResponse> {
-    return rp.post(this.url, {
+    return rp.post(this.graphqlUrl, {
       ...this.options,
       body: {
         query: meQuery,
@@ -100,7 +103,7 @@ export default class TestClient {
     email: string,
     password: string,
   ): Promise<REGISTER.register | REGISTER.registerError> {
-    return rp.post(this.url, {
+    return rp.post(this.graphqlUrl, {
       ...this.options,
       body: {
         query: registerMutation(email, password),

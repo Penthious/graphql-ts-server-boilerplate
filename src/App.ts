@@ -5,7 +5,7 @@ import * as RateLimitRedis from "rate-limit-redis";
 import * as Redis from "ioredis";
 import * as session from "express-session";
 import { Inject, Singleton } from "typescript-ioc";
-import { createConnection, Connection } from "typeorm";
+import { Connection, createConnection } from "typeorm";
 import { GraphQLServer } from "graphql-yoga";
 
 import GraphqlServerConfig from "./Config";

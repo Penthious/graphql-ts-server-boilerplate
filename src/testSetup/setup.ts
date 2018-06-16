@@ -1,6 +1,7 @@
-import { AddressInfo } from "net";
-import GraphqlServer from "../App";
 import { Container } from "typescript-ioc";
+
+import GraphqlServer from "../App";
+import { AddressInfo } from "net";
 
 export const setup = async () => {
   const App: GraphqlServer = Container.get(GraphqlServer);

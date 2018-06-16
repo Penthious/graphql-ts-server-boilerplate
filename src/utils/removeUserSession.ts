@@ -1,7 +1,8 @@
-import { Redis } from "ioredis";
-import { USER_SESSION_ID_PREFIX, REDIS_SESSION_PREFIX } from "./constants";
-import GraphqlServer from "../App";
 import { Container } from "typescript-ioc";
+import { Redis } from "ioredis";
+
+import GraphqlServer from "../App";
+import { REDIS_SESSION_PREFIX, USER_SESSION_ID_PREFIX } from "./constants";
 
 const App: GraphqlServer = Container.get(GraphqlServer);
 

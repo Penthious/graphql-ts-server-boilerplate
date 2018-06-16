@@ -1,9 +1,10 @@
 import * as Passport from "passport";
-import { Strategy as TwitterStrategy } from "passport-twitter";
 import { GraphQLServer } from "graphql-yoga";
-import { User } from "../entity/User";
-import UserRepository from "../repositories/UserRepository";
+import { Strategy as TwitterStrategy } from "passport-twitter";
 import { v4 } from "uuid";
+
+import UserRepository from "../repositories/UserRepository";
+import { User } from "../entity/User";
 
 export const twitterPassport = (server: GraphQLServer) => {
   const userRepository = new UserRepository();

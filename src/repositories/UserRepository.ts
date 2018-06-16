@@ -1,8 +1,9 @@
-import { User } from "../entity/User";
-import EntityNotFoundError from "../exceptions/EntityNotFoundError";
-import Base from "./BaseRepository";
-import { Params, UserInterface, CreateUserParams } from "../types/UserTypes";
 import { Singleton } from "typescript-ioc";
+
+import Base from "./BaseRepository";
+import EntityNotFoundError from "../exceptions/EntityNotFoundError";
+import { CreateUserParams, Params, UserInterface } from "../types/UserTypes";
+import { User } from "../entity/User";
 
 @Singleton
 export default class UserRepository extends Base {

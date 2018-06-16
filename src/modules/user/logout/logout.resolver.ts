@@ -1,8 +1,9 @@
-import { ResolverMap, Context } from "../../../types/graphql-utils";
+import { Context, ResolverMap } from "../../../types/graphql-utils";
 import {
-  removeSingleSession,
   removeAllUserSessions,
+  removeSingleSession,
 } from "../../../utils/removeUserSession";
+
 export default class Logout {
   public resolvers: ResolverMap = {
     Mutation: {

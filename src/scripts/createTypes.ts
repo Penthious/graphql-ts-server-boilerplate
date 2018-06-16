@@ -1,7 +1,8 @@
 import { generateNamespace } from "@gql2ts/from-schema";
-import { writeFile } from "fs";
-import { genSchema } from "../utils/genSchema";
 import { join } from "path";
+import { writeFile } from "fs";
+
+import { genSchema } from "../utils/genSchema";
 
 writeFile(
   join(__dirname, "../types/schema.d.ts"),

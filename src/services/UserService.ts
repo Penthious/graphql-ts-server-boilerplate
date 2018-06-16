@@ -1,9 +1,9 @@
-import { Inject, Singleton } from "typescript-ioc";
-import UserRepository from "../repositories/UserRepository";
-import { Params, CreateUserParams } from "../types/UserTypes";
-import { User } from "../entity/User";
 import { FindOneOptions } from "typeorm";
-console.log("importing the user service");
+
+import UserRepository from "../repositories/UserRepository";
+import { CreateUserParams, Params } from "../types/UserTypes";
+import { Inject, Singleton } from "typescript-ioc";
+import { User } from "../entity/User";
 // const LOG_MODULE_NAME = "graphql_server.UserService";
 
 @Singleton

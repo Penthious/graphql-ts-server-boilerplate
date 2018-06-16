@@ -1,5 +1,4 @@
 import * as SparkPost from "sparkpost";
-console.log(process.env.SPARKPOST_API_KEY, "key");
 
 const client = new SparkPost(process.env.SPARKPOST_API_KEY);
 

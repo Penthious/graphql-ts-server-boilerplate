@@ -1,13 +1,13 @@
-import TestClient from "../../../testSetup/testCLient";
-import { User } from "../../../entity/User";
-import { invalidLogin, confirmEmailError } from "./errorMessages";
-import App from "../../../App";
 import { Container } from "typescript-ioc";
 
-const host = (process.env.TEST_HOST as string) + "/graphql";
+import App from "../../../App";
+import TestClient from "../../../testSetup/testCLient";
+import { confirmEmailError, invalidLogin } from "./errorMessages";
+import { User } from "../../../entity/User";
+
 const email: string = "tom@bob.com";
 const password: string = "aoeuaoeuaoeu";
-const client = new TestClient(host);
+const client: TestClient = Container.get(TestClient);
 const app: App = Container.get(App);
 
 beforeAll(async () => {

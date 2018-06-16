@@ -1,7 +1,7 @@
 import {
+  Context,
   GraphQLMiddlewareFunc,
   Resolver,
-  Context,
 } from "../types/graphql-utils";
 
 export const createMiddleware = (

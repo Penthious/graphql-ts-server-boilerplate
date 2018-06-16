@@ -5,8 +5,7 @@ import { User } from "../entity/User";
 import App from "../App";
 import { Container } from "typescript-ioc";
 
-const host = process.env.TEST_HOST as string;
-const client = new TestClient(host);
+const client: TestClient = Container.get(TestClient);
 const app: App = Container.get(App);
 
 beforeAll(async () => {
@@ -22,7 +21,11 @@ afterAll(async () => {
 
 describe("Email link", () => {
   test("Make sure it confirms user and clears key in redis", async () => {
-    const url = await createConfirmEmailLink(host, this.userId, app.redis);
+    const url = await createConfirmEmailLink(
+      client.url,
+      this.userId,
+      app.redis,
+    );
     const response = await fetch(url);
     const text = await response.text();
 
@@ -38,7 +41,7 @@ describe("Email link", () => {
   });
 
   test("Sends invalid back if bad id sent", async () => {
-    const response = await fetch(`${host}/confirm/fake_id`);
+    const response = await fetch(`${client.url}/confirm/fake_id`);
     const text = await response.text();
 
     expect(text).toEqual("invalid");

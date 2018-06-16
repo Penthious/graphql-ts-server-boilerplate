@@ -1,3 +1,6 @@
+import { Container } from "typescript-ioc";
+
+import App from "../../../App";
 import TestClient from "../../../testSetup/testCLient";
 import {
   duplicateEmail,
@@ -6,11 +9,8 @@ import {
   passwordNotLongEnough,
 } from "./errorMessages";
 import { User } from "../../../entity/User";
-import App from "../../../App";
-import { Container } from "typescript-ioc";
 
-const host = (process.env.TEST_HOST as string) + "/graphql";
-const client = new TestClient(host);
+const client: TestClient = Container.get(TestClient);
 const app: App = Container.get(App);
 
 beforeAll(async () => {

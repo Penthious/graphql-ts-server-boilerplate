@@ -1,17 +1,17 @@
+import { Container } from "typescript-ioc";
+
+import App from "../../../App";
 import TestClient from "../../../testSetup/testCLient";
 import { accountLocked } from "../login/errorMessages";
 import { createForgotPasswordLink } from "../../../utils/createForgotPasswordLink";
 import { expiredKeyError } from "./errorMessages";
 import { forgotPasswordLockAccount } from "../../../utils/forgotPasswordLockAccount";
 import { passwordNotLongEnough } from "../register/errorMessages";
-import App from "../../../App";
-import { Container } from "typescript-ioc";
 
-const host: string = (process.env.TEST_HOST as string) + "/graphql";
-const password: string = "password";
-const client: TestClient = new TestClient(host);
-const newPassword: string = "myNewPasswordi";
 const app: App = Container.get(App);
+const client: TestClient = Container.get(TestClient);
+const newPassword: string = "myNewPasswordi";
+const password: string = "password";
 
 beforeAll(async () => {
   await app.createConn();

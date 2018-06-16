@@ -1,10 +1,10 @@
 import {
-  Entity,
-  Column,
   BaseEntity,
-  PrimaryGeneratedColumn,
   BeforeInsert,
   BeforeUpdate,
+  Column,
+  Entity,
+  PrimaryGeneratedColumn,
 } from "typeorm";
 import { hash } from "bcryptjs";
 

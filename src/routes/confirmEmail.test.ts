@@ -1,4 +1,5 @@
 import fetch from "node-fetch";
+
 const host = process.env.TEST_HOST as string;
 
 test("Sends invalid back if bad id sent", async () => {

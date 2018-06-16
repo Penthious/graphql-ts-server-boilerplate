@@ -1,13 +1,13 @@
 import * as yup from "yup";
+import { Inject } from "typescript-ioc";
 
-import { ResolverMap, Context } from "../../../types/graphql-utils";
+import UserService from "../../../services/UserService";
+import { Context, ResolverMap } from "../../../types/graphql-utils";
 import { createConfirmEmailLink } from "../../../utils/createConfirmEmailLink";
 import { duplicateEmail } from "./errorMessages";
 import { emailValidation, passwordValidation } from "../../../utils/yupSchemas";
 import { formatYupError } from "../../../utils/formatYupError";
 import { sendEmail } from "../../../utils/sendEmail";
-import UserService from "../../../services/UserService";
-import { Inject } from "typescript-ioc";
 
 export default class Register {
   public resolvers: ResolverMap = {
